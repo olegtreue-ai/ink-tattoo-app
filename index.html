@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Ink · тату студия</title>
+    <!-- VK Bridge для работы с VK Mini Apps -->
+    <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* [стили остаются без изменений] */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root,
+        [data-theme="light"] {
+            --bg-primary: #f2f2f7;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #fafafc;
+            --text-primary: #1c1c1e;
+            --text-secondary: #6c6c70;
+            --text-tertiary: #8e8e93;
+            --accent: #9b8ef5;
+            --accent-soft: #edeaff;
+            --accent-secondary: #d4a12e;
+            --accent-secondary-soft: #fff3d6;
+            --badge-new: #e54b4b;
+            --separator: #d1d1d4;
+            --border-light: rgba(60, 60, 67, 0.06);
+            --border-medium: rgba(60, 60, 67, 0.1);
+            --card-bg: #ffffff;
+            --header-blur: rgba(255,255,255,0.85);
+            --vk-blue: #0077ff;
+            --inst-pink: #e4405f;
+            --tg-blue: #26a5e4;
+            --btn-default-bg: #f2f2f7;
+            --btn-default-text: #1c1c1e;
+            --btn-active-bg: #b8aaf0;
+            --btn-active-text: #ffffff;
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #1a1d23;
+            --bg-secondary: #23272f;
+            --bg-tertiary: #2c313a;
+            --text-primary: #e8eaed;
+            --text-secondary: #9aa0a9;
+            --text-tertiary: #757b84;
+            --accent: #a99cf0;
+            --accent-soft: #3a3555;
+            --accent-secondary: #e0b044;
+            --accent-secondary-soft: #3d341a;
+            --badge-new: #e54b4b;
+            --separator: #3a3f48;
+            --border-light: rgba(255, 255, 255, 0.06);
+            --border-medium: rgba(255, 255, 255, 0.1);
+            --card-bg: #23272f;
+            --header-blur: rgba(26,29,35,0.9);
+            --vk-blue: #5a9cff;
+            --inst-pink: #ff6b81;
+            --tg-blue: #4db6e8;
+            --btn-default-bg: #2c313a;
+            --btn-default-text: #e8eaed;
+            --btn-active-bg: #8f7fd6;
+            --btn-active-text: #ffffff;
+        }
+
+        body {
+            background: var(--bg-primary);
+            font-family: "VK Sans", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+            color: var(--text-primary);
+            line-height: 1.35;
+            -webkit-font-smoothing: antialiased;
+            font-size: 14px;
+            padding: 0 0 20px;
+            transition: background 0.2s ease;
+        }
+
+        .page {
+            max-width: 400px;
+            margin: 0 auto;
+            background: var(--bg-primary);
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            background: var(--header-blur);
+            border-bottom: 0.33px solid var(--separator);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: 640;
+            letter-spacing: -0.03em;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .logo i { color: var(--accent); font-size: 20px; }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .header-actions button {
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: var(--text-primary);
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .admin-btn {
+            color: var(--accent) !important;
+        }
+
+        .actions {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+            padding: 10px 12px;
+            border-bottom: 0.33px solid var(--separator);
+        }
+        .action-btn {
+            background: var(--btn-default-bg);
+            border-radius: 12px;
+            padding: 8px 2px;
+            text-align: center;
+            text-decoration: none;
+            color: var(--btn-default-text);
+            font-weight: 500;
+            font-size: 11px;
+            transition: all 0.12s;
+            border: 0.33px solid var(--border-light);
+            cursor: pointer;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+        }
+        .action-btn i { display: block; font-size: 20px; margin-bottom: 4px; }
+        .action-btn.vk i { color: var(--vk-blue); }
+        .action-btn.inst i { color: var(--inst-pink); }
+        .action-btn.tg i { color: var(--tg-blue); }
+        .action-btn.support i { color: var(--accent); }
+        .action-btn:active { 
+            transform: scale(0.96); 
+            background: var(--btn-active-bg); 
+            color: var(--btn-active-text);
+        }
+        .action-btn:active i { color: var(--btn-active-text); }
+
+        .section-head {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            padding: 14px 12px 6px;
+        }
+        .section-head h2 {
+            font-size: 15px;
+            font-weight: 550;
+            letter-spacing: -0.01em;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--text-primary);
+        }
+        .section-head h2 i { color: var(--accent); font-size: 14px; }
+        .section-head .link { 
+            color: var(--accent); 
+            font-size: 13px; 
+            font-weight: 500;
+            text-decoration: none; 
+        }
+
+        .care-list { padding: 0 12px; }
+        .care-item { border-bottom: 0.33px solid var(--separator); }
+        .care-header {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            gap: 10px;
+            cursor: pointer;
+        }
+        .care-header i:first-child { color: var(--accent-secondary); font-size: 18px; width: 20px; }
+        .care-header .title { flex: 1; font-weight: 500; font-size: 14px; }
+        .care-header .chevron { color: var(--text-tertiary); font-size: 12px; transition: transform 0.25s; }
+        .care-item.active .chevron { transform: rotate(90deg); }
+
+        .care-content {
+            max-height: 0;
+            overflow: hidden;
+            padding: 0;
+            color: var(--text-secondary);
+            font-size: 13px;
+            transition: max-height 0.3s;
+        }
+        .care-item.active .care-content { max-height: 160px; padding: 0 0 14px 30px; }
+
+        .masters {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            padding: 4px 12px;
+        }
+        .master-card {
+            text-align: center;
+            text-decoration: none;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: transform 0.12s;
+        }
+        .master-card:active { transform: scale(0.96); }
+        .master-avatar {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 50%;
+            background: var(--card-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            color: var(--accent-secondary);
+            margin-bottom: 6px;
+            border: 1.5px solid transparent;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            transition: border 0.15s;
+        }
+        .master-card.selected .master-avatar { border-color: var(--accent); }
+        .master-card h4 { font-size: 14px; font-weight: 550; }
+        .master-card p { font-size: 11px; color: var(--text-secondary); margin-top: 1px; }
+        .selected-indicator {
+            margin-top: 2px;
+            font-size: 10px;
+            color: var(--accent);
+            opacity: 0;
+            transition: opacity 0.15s;
+        }
+        .master-card.selected .selected-indicator { opacity: 1; }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2px;
+            padding: 4px 12px;
+        }
+        .gallery-item {
+            aspect-ratio: 1/1;
+            background: var(--card-bg);
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            font-size: 26px;
+            text-decoration: none;
+            position: relative;
+            border: 0.33px solid var(--border-light);
+            transition: transform 0.12s;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+        }
+        .gallery-item:active { transform: scale(0.97); }
+        .gallery-item span { font-size: 11px; color: var(--text-secondary); margin-top: 3px; }
+        .gallery-badge {
+            position: absolute;
+            top: 3px;
+            right: 3px;
+            background: var(--badge-new);
+            color: #ffffff;
+            font-size: 8px;
+            padding: 2px 5px;
+            border-radius: 20px;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        .bottom-actions {
+            padding: 10px 12px;
+            display: flex;
+            gap: 6px;
+        }
+        .primary-btn, .secondary-btn {
+            flex: 1;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 10px 10px;
+            font-weight: 550;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            cursor: pointer;
+            transition: all 0.12s;
+            box-shadow: 0 2px 6px rgba(155,142,245,0.15);
+        }
+        .primary-btn:active, .secondary-btn:active {
+            transform: scale(0.97);
+            opacity: 0.9;
+        }
+
+        /* Админ-панель */
+        .admin-panel {
+            display: none;
+            padding: 16px 12px;
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            margin: 12px;
+            border: 0.33px solid var(--separator);
+        }
+        .admin-panel.active { display: block; }
+        .admin-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--accent);
+        }
+        .admin-section {
+            margin-bottom: 16px;
+        }
+        .admin-section h4 {
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+        }
+        .admin-input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 10px;
+            border: 0.33px solid var(--border-medium);
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+        .admin-btn-sm {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            margin-right: 8px;
+            margin-top: 4px;
+        }
+        .admin-btn-outline {
+            background: transparent;
+            border: 0.33px solid var(--border-medium);
+            color: var(--text-primary);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(8px);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        .modal.active { display: flex; }
+
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 16px;
+            max-width: 320px;
+            width: 100%;
+            border: 0.33px solid var(--separator);
+        }
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        .modal-header h3 { font-size: 16px; font-weight: 580; }
+        .modal-header button {
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: var(--accent);
+            cursor: pointer;
+        }
+
+        .masters-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            max-height: 260px;
+            overflow-y: auto;
+        }
+        .master-select-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            background: var(--bg-tertiary);
+            border-radius: 14px;
+            cursor: pointer;
+            border: 0.33px solid var(--border-light);
+        }
+        .master-select-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: var(--accent-secondary);
+        }
+        .master-select-info h4 { font-weight: 580; font-size: 14px; margin-bottom: 1px; }
+        .master-select-info p { font-size: 12px; color: var(--text-secondary); }
+
+        .weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+        .days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 3px;
+        }
+        .day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-tertiary);
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            border: 0.33px solid var(--border-light);
+        }
+        .day.free { background: var(--accent-soft); color: var(--accent); font-weight: 500; }
+        .day.partial { background: var(--accent-secondary-soft); color: var(--accent-secondary); }
+        .day.booked { opacity: 0.4; cursor: not-allowed; }
+        .day.selected { outline: 1.5px solid var(--accent); }
+
+        .time-slots {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+            margin: 12px 0;
+        }
+        .time-slot {
+            padding: 8px;
+            text-align: center;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            border: 0.33px solid var(--border-light);
+        }
+        .time-slot.selected { background: var(--accent); color: white; }
+
+        .modal-footer {
+            display: flex;
+            gap: 6px;
+            margin-top: 12px;
+        }
+        .modal-footer button {
+            flex: 1;
+            padding: 10px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 560;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .btn-primary { background: var(--accent); color: white; }
+        .btn-secondary { background: var(--bg-tertiary); color: var(--text-primary); }
+
+        .footer {
+            padding: 16px 12px 6px;
+            font-size: 12px;
+            color: var(--text-tertiary);
+            display: flex;
+            justify-content: space-between;
+            border-top: 0.33px solid var(--separator);
+            margin-top: 10px;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: 500;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+            z-index: 200;
+        }
+        .toast.show { opacity: 1; }
+    </style>
+</head>
+<body>
+<div class="page">
+    <div class="header">
+        <div class="logo"><i class="fas fa-sparkles"></i> <span id="studioName">Ink</span></div>
+        <div class="header-actions">
+            <button id="adminToggleBtn" class="admin-btn" style="display:none;"><i class="fas fa-user-cog"></i></button>
+            <button id="themeToggleBtn"><i class="fas fa-circle-half-stroke" id="themeIcon"></i></button>
+        </div>
+    </div>
+
+    <!-- Админ-панель (видна только админу) -->
+    <div class="admin-panel" id="adminPanel">
+        <div class="admin-title"><i class="fas fa-lock"></i> Админ-панель</div>
+        
+        <div class="admin-section">
+            <h4>Название студии</h4>
+            <input type="text" id="editStudioName" class="admin-input" placeholder="Ink">
+        </div>
+
+        <div class="admin-section">
+            <h4>Ссылки</h4>
+            <input type="text" id="editVkLink" class="admin-input" placeholder="VK ссылка">
+            <input type="text" id="editInstLink" class="admin-input" placeholder="Instagram ссылка">
+            <input type="text" id="editTgLink" class="admin-input" placeholder="Telegram ссылка">
+            <input type="text" id="editSupportLink" class="admin-input" placeholder="Поддержка (чат)">
+        </div>
+
+        <div class="admin-section">
+            <h4>Инструкции по уходу</h4>
+            <input type="text" id="editCare1Title" class="admin-input" placeholder="Заголовок 1">
+            <textarea id="editCare1Text" class="admin-input" rows="2" placeholder="Текст 1"></textarea>
+            <input type="text" id="editCare2Title" class="admin-input" placeholder="Заголовок 2">
+            <textarea id="editCare2Text" class="admin-input" rows="2" placeholder="Текст 2"></textarea>
+            <input type="text" id="editCare3Title" class="admin-input" placeholder="Заголовок 3">
+            <textarea id="editCare3Text" class="admin-input" rows="2" placeholder="Текст 3"></textarea>
+        </div>
+
+        <div class="admin-section">
+            <h4>Мастера (JSON)</h4>
+            <textarea id="editMasters" class="admin-input" rows="6" placeholder="Мастера в JSON"></textarea>
+        </div>
+
+        <div class="admin-section">
+            <button class="admin-btn-sm" onclick="saveAllSettings()"><i class="fas fa-save"></i> Сохранить</button>
+            <button class="admin-btn-sm admin-btn-outline" onclick="exportData()"><i class="fas fa-download"></i> Экспорт</button>
+            <button class="admin-btn-sm admin-btn-outline" onclick="importData()"><i class="fas fa-upload"></i> Импорт</button>
+        </div>
+        <p style="font-size:11px; color:var(--text-tertiary); margin-top:8px;">Ваш ID: <span id="userIdDisplay"></span></p>
+    </div>
+
+    <div class="actions">
+        <a href="#" class="action-btn vk" id="vkBtn" target="_blank"><i class="fab fa-vk"></i> VK</a>
+        <a href="#" class="action-btn inst" id="instBtn" target="_blank"><i class="fab fa-instagram"></i> Inst</a>
+        <a href="#" class="action-btn tg" id="tgBtn" target="_blank"><i class="fab fa-telegram-plane"></i> TG</a>
+        <div class="action-btn support" id="supportBtn"><i class="fas fa-headset"></i> Поддержка</div>
+    </div>
+
+    <div class="section-head"><h2><i class="fas fa-hand-holding-heart"></i> Уход</h2><a href="#" class="link">Подробнее →</a></div>
+    <div class="care-list" id="careContainer"></div>
+
+    <div class="section-head"><h2><i class="fas fa-user-group"></i> Мастера</h2><a href="#" class="link">Все →</a></div>
+    <div class="masters" id="mastersContainer"></div>
+
+    <div class="section-head"><h2><i class="fas fa-grid-2"></i> Работы</h2><a href="#" class="link">Все →</a></div>
+    <div class="gallery" id="galleryContainer"></div>
+
+    <div class="bottom-actions">
+        <button class="primary-btn" id="bookBtn"><i class="fas fa-calendar"></i> Запись к мастеру</button>
+        <button class="secondary-btn" id="chatBtn"><i class="fas fa-comment"></i> Чат с мастером</button>
+    </div>
+
+    <div class="footer"><span>© 2026 <span id="footerStudioName">Ink</span> Studio</span><span>VK Mini App</span></div>
+</div>
+
+<!-- Модалки -->
+<div class="modal" id="masterSelectModal">
+    <div class="modal-content">
+        <div class="modal-header"><h3 id="modalTitle">Выберите мастера</h3><button class="close-modal"><i class="fas fa-times"></i></button></div>
+        <div class="masters-list" id="mastersList"></div>
+        <div class="modal-footer" style="margin-top:12px;"><button class="btn-secondary close-modal">Отмена</button></div>
+    </div>
+</div>
+
+<div class="modal" id="calendarModal">
+    <div class="modal-content">
+        <div class="modal-header"><h3 id="calendarTitle">Запись к Анне</h3><button class="close-calendar"><i class="fas fa-times"></i></button></div>
+        <div class="weekdays"><span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span></div>
+        <div class="days" id="daysContainer"></div>
+        <div class="time-slots" id="timeSlots"></div>
+        <div class="modal-footer">
+            <button class="btn-secondary close-calendar">Отмена</button>
+            <button class="btn-primary" id="confirmBookingBtn">Записаться</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+    (function(){
+        // Инициализация VK Bridge
+        const bridge = window.vkBridge;
+        
+        // Данные по умолчанию
+        let appData = {
+            studioName: 'Ink',
+            vkLink: '#',
+            instLink: '#',
+            tgLink: '#',
+            supportLink: '#',
+            care: [
+                { title: 'Первичное заживление', text: '0–4 дня: не снимать плёнку, не мочить, лимфу промокать снаружи.' },
+                { title: 'Увлажнение и крем', text: '4–14 день: тонкий слой крема 2-3 раза, мыть pH-нейтральным мылом.' },
+                { title: 'Долговременная защита', text: 'После заживления: SPF 50, увлажнение без отдушек, коррекция раз в год.' }
+            ],
+            masters: [
+                { id: 'anna', name: 'Анна', spec: 'Япония · Неотрад', icon: 'fa-user-astronaut', chat: '#', calendar: 'anna',
+                  works: [{ icon: 'fa-dragon', name: 'Дракон', badge: true },{ icon: 'fa-fish', name: 'Кои', badge: false },{ icon: 'fa-skull', name: 'Череп', badge: true },{ icon: 'fa-crow', name: 'Ворон', badge: false },{ icon: 'fa-leaf', name: 'Ботаника', badge: true },{ icon: 'fa-moon', name: 'Луна', badge: false }] },
+                { id: 'max', name: 'Макс', spec: 'Блэкворк · Графика', icon: 'fa-user-ninja', chat: '#', calendar: 'max',
+                  works: [{ icon: 'fa-crow', name: 'Ворон', badge: true },{ icon: 'fa-skull', name: 'Череп', badge: false },{ icon: 'fa-moon', name: 'Луна', badge: true },{ icon: 'fa-dragon', name: 'Дракон', badge: false },{ icon: 'fa-fish', name: 'Кои', badge: true },{ icon: 'fa-leaf', name: 'Ботаника', badge: false }] },
+                { id: 'eva', name: 'Ева', spec: 'Минимал · Ботаника', icon: 'fa-user-crown', chat: '#', calendar: 'eva',
+                  works: [{ icon: 'fa-leaf', name: 'Ботаника', badge: true },{ icon: 'fa-moon', name: 'Луна', badge: false },{ icon: 'fa-fish', name: 'Кои', badge: true },{ icon: 'fa-crow', name: 'Ворон', badge: false },{ icon: 'fa-dragon', name: 'Дракон', badge: true },{ icon: 'fa-skull', name: 'Череп', badge: false }] }
+            ]
+        };
+
+        let currentUserId = null;
+        const 630691351 = []; // Заполните свои ID ВКонтакте (числовые)
+
+        let selectedMasterId = 'anna';
+        let currentMode = 'book';
+        let selectedMasterForAction = null;
+        let selectedDate = null, selectedTime = null;
+
+        // Загрузка данных из Storage
+        async function loadData() {
+            try {
+                const keys = await bridge.send('VKWebAppStorageGet', { keys: ['appData'] });
+                if (keys.keys[0]?.value) {
+                    appData = JSON.parse(keys.keys[0].value);
+                }
+            } catch(e) {}
+            applyData();
+        }
+
+        function applyData() {
+            document.getElementById('studioName').textContent = appData.studioName;
+            document.getElementById('footerStudioName').textContent = appData.studioName;
+            
+            document.getElementById('vkBtn').href = appData.vkLink;
+            document.getElementById('instBtn').href = appData.instLink;
+            document.getElementById('tgBtn').href = appData.tgLink;
+            
+            renderCare();
+            renderMasters();
+            renderGallery(selectedMasterId);
+            
+            // Заполняем админ-поля
+            document.getElementById('editStudioName').value = appData.studioName;
+            document.getElementById('editVkLink').value = appData.vkLink;
+            document.getElementById('editInstLink').value = appData.instLink;
+            document.getElementById('editTgLink').value = appData.tgLink;
+            document.getElementById('editSupportLink').value = appData.supportLink;
+            
+            document.getElementById('editCare1Title').value = appData.care[0]?.title || '';
+            document.getElementById('editCare1Text').value = appData.care[0]?.text || '';
+            document.getElementById('editCare2Title').value = appData.care[1]?.title || '';
+            document.getElementById('editCare2Text').value = appData.care[1]?.text || '';
+            document.getElementById('editCare3Title').value = appData.care[2]?.title || '';
+            document.getElementById('editCare3Text').value = appData.care[2]?.text || '';
+            
+            document.getElementById('editMasters').value = JSON.stringify(appData.masters, null, 2);
+        }
+
+        function renderCare() {
+            const container = document.getElementById('careContainer');
+            container.innerHTML = appData.care.map((c, i) => `
+                <div class="care-item">
+                    <div class="care-header" onclick="toggleCare(this)">
+                        <i class="fas ${i===0?'fa-band-aid':i===1?'fa-pump-medical':'fa-sun'}"></i>
+                        <span class="title">${c.title}</span>
+                        <i class="fas fa-chevron-right chevron"></i>
+                    </div>
+                    <div class="care-content">${c.text}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderMasters() {
+            const container = document.getElementById('mastersContainer');
+            container.innerHTML = appData.masters.map(m => `
+                <div class="master-card ${m.id === selectedMasterId ? 'selected' : ''}" data-master-id="${m.id}">
+                    <div class="master-avatar"><i class="fas ${m.icon}"></i></div>
+                    <h4>${m.name}</h4>
+                    <p>${m.spec}</p>
+                    <div class="selected-indicator"><i class="fas fa-check-circle"></i> выбран</div>
+                </div>
+            `).join('');
+            container.querySelectorAll('.master-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    selectedMasterId = this.dataset.masterId;
+                    renderMasters();
+                    renderGallery(selectedMasterId);
+                });
+            });
+        }
+
+        function renderGallery(masterId) {
+            const master = appData.masters.find(m => m.id === masterId);
+            if (!master) return;
+            document.getElementById('galleryContainer').innerHTML = master.works.map(w => `
+                <a href="#" class="gallery-item">
+                    <i class="fas ${w.icon}"></i><span>${w.name}</span>
+                    ${w.badge ? '<span class="gallery-badge">new</span>' : ''}
+                </a>
+            `).join('');
+        }
+
+        // Сохранение
+        async function saveAllSettings() {
+            appData.studioName = document.getElementById('editStudioName').value;
+            appData.vkLink = document.getElementById('editVkLink').value;
+            appData.instLink = document.getElementById('editInstLink').value;
+            appData.tgLink = document.getElementById('editTgLink').value;
+            appData.supportLink = document.getElementById('editSupportLink').value;
+            
+            appData.care = [
+                { title: document.getElementById('editCare1Title').value, text: document.getElementById('editCare1Text').value },
+                { title: document.getElementById('editCare2Title').value, text: document.getElementById('editCare2Text').value },
+                { title: document.getElementById('editCare3Title').value, text: document.getElementById('editCare3Text').value }
+            ];
+            
+            try {
+                appData.masters = JSON.parse(document.getElementById('editMasters').value);
+            } catch(e) {
+                showToast('Ошибка JSON в мастерах');
+                return;
+            }
+            
+            try {
+                await bridge.send('VKWebAppStorageSet', { key: 'appData', value: JSON.stringify(appData) });
+                showToast('Сохранено!');
+                applyData();
+            } catch(e) {
+                showToast('Ошибка сохранения');
+            }
+        }
+
+        window.exportData = function() {
+            const blob = new Blob([JSON.stringify(appData, null, 2)], {type: 'application/json'});
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'ink_backup.json';
+            a.click();
+        };
+
+        window.importData = function() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = async (e) => {
+                const file = e.target.files[0];
+                const text = await file.text();
+                try {
+                    appData = JSON.parse(text);
+                    await bridge.send('VKWebAppStorageSet', { key: 'appData', value: JSON.stringify(appData) });
+                    applyData();
+                    showToast('Импортировано!');
+                } catch(e) {
+                    showToast('Ошибка импорта');
+                }
+            };
+            input.click();
+        };
+
+        window.saveAllSettings = saveAllSettings;
+
+        // Проверка админа
+        async function checkAdmin() {
+            try {
+                const user = await bridge.send('VKWebAppGetUserInfo');
+                currentUserId = user.id;
+                document.getElementById('userIdDisplay').textContent = user.id;
+                
+                // Проверяем, является ли пользователь админом
+                if (630691351.includes(user.id) || 630691351.length === 0) {
+                    document.getElementById('adminToggleBtn').style.display = 'block';
+                }
+            } catch(e) {}
+        }
+
+        // Тема
+        const html = document.documentElement;
+        const themeBtn = document.getElementById('themeToggleBtn');
+        const themeIcon = document.getElementById('themeIcon');
+        
+        async function loadTheme() {
+            try {
+                const keys = await bridge.send('VKWebAppStorageGet', { keys: ['userTheme'] });
+                const theme = keys.keys[0]?.value || 'auto';
+                applyTheme(theme);
+            } catch(e) {
+                applyTheme('auto');
+            }
+        }
+        
+        function applyTheme(m) {
+            if (m === 'light') { html.setAttribute('data-theme', 'light'); themeIcon.className = 'fas fa-sun'; }
+            else if (m === 'dark') { html.setAttribute('data-theme', 'dark'); themeIcon.className = 'fas fa-moon'; }
+            else { html.removeAttribute('data-theme'); themeIcon.className = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'fas fa-moon' : 'fas fa-sun'; }
+        }
+        
+        async function cycleTheme() {
+            const current = html.getAttribute('data-theme') || 'auto';
+            let next;
+            if (current === 'auto') next = 'light';
+            else if (current === 'light') next = 'dark';
+            else next = 'auto';
+            
+            applyTheme(next);
+            try {
+                await bridge.send('VKWebAppStorageSet', { key: 'userTheme', value: next });
+            } catch(e) {}
+        }
+        
+        themeBtn.addEventListener('click', cycleTheme);
+
+        // Остальной функционал
+        window.toggleCare = function(h) { 
+            const i = h.closest('.care-item'); 
+            document.querySelectorAll('.care-item').forEach(c => { if(c!==i) c.classList.remove('active'); }); 
+            i.classList.toggle('active'); 
+        };
+
+        function showToast(m) { 
+            const t = document.getElementById('toast'); 
+            t.textContent = m; 
+            t.classList.add('show'); 
+            setTimeout(() => t.classList.remove('show'), 2000); 
+        }
+
+        // Инициализация
+        (async function init() {
+            await bridge.send('VKWebAppInit');
+            await checkAdmin();
+            await loadData();
+            await loadTheme();
+            
+            // Кнопка админ-панели
+            document.getElementById('adminToggleBtn').addEventListener('click', () => {
+                document.getElementById('adminPanel').classList.toggle('active');
+            });
+            
+            // Поддержка
+            document.getElementById('supportBtn').addEventListener('click', () => {
+                if (appData.supportLink && appData.supportLink !== '#') {
+                    bridge.send('VKWebAppOpenLink', { link: appData.supportLink });
+                } else {
+                    showToast('Ссылка на поддержку не указана');
+                }
+            });
+            
+            // Остальные обработчики
+            document.getElementById('bookBtn').addEventListener('click', ()=>{ 
+                currentMode='book'; 
+                document.getElementById('modalTitle').textContent='Выберите мастера'; 
+                renderMastersList(); 
+                document.getElementById('masterSelectModal').classList.add('active'); 
+            });
+            document.getElementById('chatBtn').addEventListener('click', ()=>{ 
+                currentMode='chat'; 
+                document.getElementById('modalTitle').textContent='Выберите мастера'; 
+                renderMastersList(); 
+                document.getElementById('masterSelectModal').classList.add('active'); 
+            });
+        })();
+
+        function renderMastersList() {
+            const list = document.getElementById('mastersList');
+            list.innerHTML = appData.masters.map(m => `
+                <div class="master-select-item" data-master-id="${m.id}">
+                    <div class="master-select-avatar"><i class="fas ${m.icon}"></i></div>
+                    <div class="master-select-info"><h4>${m.name}</h4><p>${m.spec}</p></div>
+                </div>
+            `).join('');
+            list.querySelectorAll('.master-select-item').forEach(el => {
+                el.addEventListener('click', function() {
+                    const master = appData.masters.find(m => m.id === this.dataset.masterId);
+                    selectedMasterForAction = master;
+                    document.getElementById('masterSelectModal').classList.remove('active');
+                    if (currentMode === 'book') {
+                        openCalendar(master);
+                    } else {
+                        if (master.chat && master.chat !== '#') {
+                            bridge.send('VKWebAppOpenLink', { link: master.chat });
+                        } else {
+                            showToast(`Чат с ${master.name} не настроен`);
+                        }
+                    }
+                });
+            });
+        }
+
+        function openCalendar(m) {
+            document.getElementById('calendarTitle').textContent = `Запись к ${m.name}`;
+            generateCalendar(m.calendar);
+            generateTimeSlots();
+            document.getElementById('calendarModal').classList.add('active');
+        }
+
+        function generateCalendar(mid) {
+            const t = new Date(); const days = [];
+            for (let i=1; i<=30; i++) { 
+                const d = new Date(t.getFullYear(), t.getMonth(), i); 
+                if (d.getMonth()!==t.getMonth()) continue;
+                let s = 'free'; 
+                if (mid==='anna'&&i%3===0) s='booked'; 
+                else if (mid==='max'&&i%4===0) s='partial'; 
+                else if (mid==='eva'&&i%5===0) s='booked'; 
+                if (i%7===0) s='partial';
+                days.push({day:i, status:s}); 
+            }
+            const container = document.getElementById('daysContainer');
+            container.innerHTML = days.map(d => `<div class="day ${d.status}" data-day="${d.day}">${d.day}</div>`).join('');
+            container.querySelectorAll('.day').forEach(el => { 
+                el.addEventListener('click', function() { 
+                    if(this.classList.contains('booked')) return; 
+                    container.querySelectorAll('.day').forEach(d=>d.classList.remove('selected')); 
+                    this.classList.add('selected'); 
+                    selectedDate = this.dataset.day; 
+                }); 
+            });
+        }
+
+        function generateTimeSlots() {
+            const slots = document.getElementById('timeSlots');
+            slots.innerHTML = '';
+            ['10:00','12:00','14:00','16:00','18:00','20:00'].forEach(t => { 
+                const div = document.createElement('div'); 
+                div.className = 'time-slot'; 
+                div.textContent = t; 
+                div.addEventListener('click', function() { 
+                    slots.querySelectorAll('.time-slot').forEach(s=>s.classList.remove('selected')); 
+                    this.classList.add('selected'); 
+                    selectedTime = this.textContent; 
+                }); 
+                slots.appendChild(div); 
+            });
+        }
+
+        // Закрытие модалок
+        document.querySelectorAll('.close-modal').forEach(b=>b.addEventListener('click',()=>document.getElementById('masterSelectModal').classList.remove('active')));
+        document.querySelectorAll('.close-calendar').forEach(b=>b.addEventListener('click',()=>document.getElementById('calendarModal').classList.remove('active')));
+        
+        document.getElementById('confirmBookingBtn').addEventListener('click', ()=>{
+            if(!selectedDate||!selectedTime){showToast('Выберите дату и время');return;}
+            if(!selectedMasterForAction){showToast('Мастер не выбран');return;}
+            showToast(`Запись к ${selectedMasterForAction.name} на ${selectedDate} число в ${selectedTime}.`);
+            document.getElementById('calendarModal').classList.remove('active');
+        });
+    })();
+</script>
+</body>
+</html>
