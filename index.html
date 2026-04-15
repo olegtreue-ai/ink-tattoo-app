@@ -4,11 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <title>Ink · тату студия</title>
-    <!-- VK Bridge для работы с VK Mini Apps -->
     <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* [стили остаются без изменений] */
         * {
             margin: 0;
             padding: 0;
@@ -29,8 +27,8 @@
             --accent-secondary-soft: #fff3d6;
             --badge-new: #e54b4b;
             --separator: #d1d1d4;
-            --border-light: rgba(60, 60, 67, 0.06);
-            --border-medium: rgba(60, 60, 67, 0.1);
+            --border-light: rgba(60, 60, 67, 0.1);
+            --border-medium: rgba(60, 60, 67, 0.15);
             --card-bg: #ffffff;
             --header-blur: rgba(255,255,255,0.85);
             --vk-blue: #0077ff;
@@ -55,8 +53,8 @@
             --accent-secondary-soft: #3d341a;
             --badge-new: #e54b4b;
             --separator: #3a3f48;
-            --border-light: rgba(255, 255, 255, 0.06);
-            --border-medium: rgba(255, 255, 255, 0.1);
+            --border-light: rgba(255, 255, 255, 0.12);
+            --border-medium: rgba(255, 255, 255, 0.18);
             --card-bg: #23272f;
             --header-blur: rgba(26,29,35,0.9);
             --vk-blue: #5a9cff;
@@ -72,51 +70,55 @@
             background: var(--bg-primary);
             font-family: "VK Sans", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
             color: var(--text-primary);
-            line-height: 1.35;
+            line-height: 1.4;
             -webkit-font-smoothing: antialiased;
-            font-size: 14px;
+            font-size: 15px;
             padding: 0 0 20px;
             transition: background 0.2s ease;
+            padding-top: constant(safe-area-inset-top);
+            padding-top: env(safe-area-inset-top);
         }
 
         .page {
-            max-width: 400px;
+            max-width: 420px;
             margin: 0 auto;
             background: var(--bg-primary);
         }
 
+        /* Header с безопасными отступами */
         .header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 8px 12px;
+            padding: 14px 16px;
+            padding-top: max(14px, env(safe-area-inset-top));
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
             background: var(--header-blur);
-            border-bottom: 0.33px solid var(--separator);
+            border-bottom: 0.5px solid var(--separator);
             position: sticky;
             top: 0;
             z-index: 10;
         }
 
         .logo {
-            font-size: 22px;
+            font-size: 24px;
             font-weight: 640;
             letter-spacing: -0.03em;
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
         }
-        .logo i { color: var(--accent); font-size: 20px; }
+        .logo i { color: var(--accent); font-size: 22px; }
 
         .header-actions {
             display: flex;
-            gap: 8px;
+            gap: 12px;
         }
         .header-actions button {
             background: none;
             border: none;
-            font-size: 18px;
+            font-size: 22px;
             color: var(--text-primary);
             cursor: pointer;
             padding: 4px;
@@ -126,74 +128,66 @@
             color: var(--accent) !important;
         }
 
+        /* Соцсети — нормальные кнопки с рамками */
         .actions {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 5px;
-            padding: 10px 12px;
-            border-bottom: 0.33px solid var(--separator);
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            padding: 16px 16px;
+            border-bottom: 0.5px solid var(--separator);
         }
         .action-btn {
             background: var(--btn-default-bg);
-            border-radius: 12px;
-            padding: 8px 2px;
+            border-radius: 14px;
+            padding: 12px 6px;
             text-align: center;
             text-decoration: none;
             color: var(--btn-default-text);
             font-weight: 500;
-            font-size: 11px;
+            font-size: 13px;
             transition: all 0.12s;
-            border: 0.33px solid var(--border-light);
+            border: 1px solid var(--border-light);
             cursor: pointer;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
         }
-        .action-btn i { display: block; font-size: 20px; margin-bottom: 4px; }
+        .action-btn i { display: block; font-size: 24px; margin-bottom: 6px; }
         .action-btn.vk i { color: var(--vk-blue); }
         .action-btn.inst i { color: var(--inst-pink); }
         .action-btn.tg i { color: var(--tg-blue); }
-        .action-btn.support i { color: var(--accent); }
         .action-btn:active { 
-            transform: scale(0.96); 
+            transform: scale(0.97); 
             background: var(--btn-active-bg); 
             color: var(--btn-active-text);
         }
         .action-btn:active i { color: var(--btn-active-text); }
 
+        /* Заголовки секций — без стрелок */
         .section-head {
-            display: flex;
-            align-items: baseline;
-            justify-content: space-between;
-            padding: 14px 12px 6px;
+            padding: 18px 16px 8px;
         }
         .section-head h2 {
-            font-size: 15px;
-            font-weight: 550;
+            font-size: 17px;
+            font-weight: 600;
             letter-spacing: -0.01em;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
             color: var(--text-primary);
         }
-        .section-head h2 i { color: var(--accent); font-size: 14px; }
-        .section-head .link { 
-            color: var(--accent); 
-            font-size: 13px; 
-            font-weight: 500;
-            text-decoration: none; 
-        }
+        .section-head h2 i { color: var(--accent); font-size: 16px; }
 
-        .care-list { padding: 0 12px; }
-        .care-item { border-bottom: 0.33px solid var(--separator); }
+        /* Уход */
+        .care-list { padding: 0 16px; }
+        .care-item { border-bottom: 0.5px solid var(--separator); }
         .care-header {
             display: flex;
             align-items: center;
-            padding: 12px 0;
-            gap: 10px;
+            padding: 16px 0;
+            gap: 12px;
             cursor: pointer;
         }
-        .care-header i:first-child { color: var(--accent-secondary); font-size: 18px; width: 20px; }
-        .care-header .title { flex: 1; font-weight: 500; font-size: 14px; }
-        .care-header .chevron { color: var(--text-tertiary); font-size: 12px; transition: transform 0.25s; }
+        .care-header i:first-child { color: var(--accent-secondary); font-size: 20px; width: 22px; }
+        .care-header .title { flex: 1; font-weight: 500; font-size: 15px; }
+        .care-header .chevron { color: var(--text-tertiary); font-size: 14px; transition: transform 0.25s; }
         .care-item.active .chevron { transform: rotate(90deg); }
 
         .care-content {
@@ -201,25 +195,25 @@
             overflow: hidden;
             padding: 0;
             color: var(--text-secondary);
-            font-size: 13px;
+            font-size: 14px;
             transition: max-height 0.3s;
         }
-        .care-item.active .care-content { max-height: 160px; padding: 0 0 14px 30px; }
+        .care-item.active .care-content { max-height: 180px; padding: 0 0 18px 34px; }
 
+        /* Мастера */
         .masters {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            padding: 4px 12px;
+            gap: 10px;
+            padding: 6px 16px;
         }
         .master-card {
             text-align: center;
             text-decoration: none;
             color: var(--text-primary);
             cursor: pointer;
-            transition: transform 0.12s;
         }
-        .master-card:active { transform: scale(0.96); }
+        .master-card:active { transform: scale(0.97); }
         .master-avatar {
             width: 100%;
             aspect-ratio: 1;
@@ -228,108 +222,131 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 26px;
+            font-size: 32px;
             color: var(--accent-secondary);
-            margin-bottom: 6px;
-            border: 1.5px solid transparent;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            margin-bottom: 8px;
+            border: 2px solid transparent;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
             transition: border 0.15s;
         }
         .master-card.selected .master-avatar { border-color: var(--accent); }
-        .master-card h4 { font-size: 14px; font-weight: 550; }
-        .master-card p { font-size: 11px; color: var(--text-secondary); margin-top: 1px; }
+        .master-card h4 { font-size: 15px; font-weight: 600; }
+        .master-card p { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
         .selected-indicator {
-            margin-top: 2px;
-            font-size: 10px;
+            margin-top: 4px;
+            font-size: 11px;
             color: var(--accent);
             opacity: 0;
             transition: opacity 0.15s;
         }
         .master-card.selected .selected-indicator { opacity: 1; }
 
-        .gallery {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2px;
-            padding: 4px 12px;
-        }
-        .gallery-item {
-            aspect-ratio: 1/1;
-            background: var(--card-bg);
-            border-radius: 6px;
+        /* Кнопки записи/чата между мастерами и работами */
+        .middle-actions {
+            padding: 16px 16px 8px;
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: var(--accent);
-            font-size: 26px;
-            text-decoration: none;
-            position: relative;
-            border: 0.33px solid var(--border-light);
-            transition: transform 0.12s;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
-        }
-        .gallery-item:active { transform: scale(0.97); }
-        .gallery-item span { font-size: 11px; color: var(--text-secondary); margin-top: 3px; }
-        .gallery-badge {
-            position: absolute;
-            top: 3px;
-            right: 3px;
-            background: var(--badge-new);
-            color: #ffffff;
-            font-size: 8px;
-            padding: 2px 5px;
-            border-radius: 20px;
-            font-weight: 600;
-            line-height: 1.2;
-        }
-
-        .bottom-actions {
-            padding: 10px 12px;
-            display: flex;
-            gap: 6px;
+            gap: 8px;
         }
         .primary-btn, .secondary-btn {
             flex: 1;
             background: var(--accent);
             color: white;
             border: none;
-            border-radius: 30px;
-            padding: 10px 10px;
-            font-weight: 550;
-            font-size: 14px;
+            border-radius: 16px;
+            padding: 14px 10px;
+            font-weight: 600;
+            font-size: 15px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 5px;
+            gap: 6px;
             cursor: pointer;
             transition: all 0.12s;
-            box-shadow: 0 2px 6px rgba(155,142,245,0.15);
         }
-        .primary-btn:active, .secondary-btn:active {
-            transform: scale(0.97);
-            opacity: 0.9;
+        .secondary-btn {
+            background: var(--btn-default-bg);
+            color: var(--text-primary);
+            border: 1px solid var(--border-light);
         }
+        .primary-btn:active, .secondary-btn:active { transform: scale(0.98); opacity: 0.9; }
+
+        /* Галерея */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3px;
+            padding: 6px 16px;
+        }
+        .gallery-item {
+            aspect-ratio: 1/1;
+            background: var(--card-bg);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            font-size: 30px;
+            text-decoration: none;
+            position: relative;
+            border: 0.5px solid var(--border-light);
+            transition: transform 0.12s;
+        }
+        .gallery-item:active { transform: scale(0.97); }
+        .gallery-item span { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+        .gallery-badge {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: var(--badge-new);
+            color: #ffffff;
+            font-size: 9px;
+            padding: 3px 6px;
+            border-radius: 20px;
+            font-weight: 600;
+            line-height: 1;
+        }
+
+        /* Поддержка внизу */
+        .support-bottom {
+            padding: 16px 16px 8px;
+            margin-top: 8px;
+            border-top: 0.5px solid var(--separator);
+        }
+        .support-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: var(--btn-default-bg);
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            padding: 14px;
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 15px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .support-btn i { color: var(--accent); font-size: 18px; }
 
         /* Админ-панель */
         .admin-panel {
             display: none;
-            padding: 16px 12px;
+            padding: 16px;
             background: var(--bg-secondary);
             border-radius: 20px;
-            margin: 12px;
-            border: 0.33px solid var(--separator);
+            margin: 12px 16px;
+            border: 0.5px solid var(--separator);
         }
         .admin-panel.active { display: block; }
         .admin-title {
-            font-size: 16px;
+            font-size: 17px;
             font-weight: 600;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
             color: var(--accent);
         }
-        .admin-section {
-            margin-bottom: 16px;
-        }
+        .admin-section { margin-bottom: 16px; }
         .admin-section h4 {
             font-size: 14px;
             margin-bottom: 8px;
@@ -337,31 +354,31 @@
         }
         .admin-input {
             width: 100%;
-            padding: 10px;
-            border-radius: 10px;
-            border: 0.33px solid var(--border-medium);
+            padding: 12px;
+            border-radius: 12px;
+            border: 0.5px solid var(--border-medium);
             background: var(--bg-tertiary);
             color: var(--text-primary);
-            font-size: 13px;
+            font-size: 14px;
             margin-bottom: 8px;
         }
         .admin-btn-sm {
             background: var(--accent);
             color: white;
             border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 13px;
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-size: 14px;
             cursor: pointer;
             margin-right: 8px;
-            margin-top: 4px;
         }
         .admin-btn-outline {
             background: transparent;
-            border: 0.33px solid var(--border-medium);
+            border: 0.5px solid var(--border-medium);
             color: var(--text-primary);
         }
 
+        /* Модалки */
         .modal {
             display: none;
             position: fixed;
@@ -371,29 +388,29 @@
             z-index: 100;
             align-items: center;
             justify-content: center;
-            padding: 16px;
+            padding: 20px;
         }
         .modal.active { display: flex; }
 
         .modal-content {
             background: var(--card-bg);
-            border-radius: 20px;
-            padding: 16px;
-            max-width: 320px;
+            border-radius: 24px;
+            padding: 20px;
+            max-width: 340px;
             width: 100%;
-            border: 0.33px solid var(--separator);
+            border: 0.5px solid var(--separator);
         }
         .modal-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
         }
-        .modal-header h3 { font-size: 16px; font-weight: 580; }
+        .modal-header h3 { font-size: 18px; font-weight: 600; }
         .modal-header button {
             background: none;
             border: none;
-            font-size: 18px;
+            font-size: 20px;
             color: var(--accent);
             cursor: pointer;
         }
@@ -401,46 +418,46 @@
         .masters-list {
             display: flex;
             flex-direction: column;
-            gap: 6px;
-            max-height: 260px;
+            gap: 8px;
+            max-height: 300px;
             overflow-y: auto;
         }
         .master-select-item {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 10px;
+            gap: 14px;
+            padding: 12px;
             background: var(--bg-tertiary);
-            border-radius: 14px;
+            border-radius: 16px;
             cursor: pointer;
-            border: 0.33px solid var(--border-light);
+            border: 0.5px solid var(--border-light);
         }
         .master-select-avatar {
-            width: 42px;
-            height: 42px;
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
             background: var(--card-bg);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 24px;
             color: var(--accent-secondary);
         }
-        .master-select-info h4 { font-weight: 580; font-size: 14px; margin-bottom: 1px; }
-        .master-select-info p { font-size: 12px; color: var(--text-secondary); }
+        .master-select-info h4 { font-weight: 600; font-size: 15px; margin-bottom: 2px; }
+        .master-select-info p { font-size: 13px; color: var(--text-secondary); }
 
         .weekdays {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
             text-align: center;
-            font-size: 11px;
+            font-size: 12px;
             color: var(--text-secondary);
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
         .days {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 3px;
+            gap: 4px;
         }
         .day {
             aspect-ratio: 1;
@@ -448,71 +465,69 @@
             align-items: center;
             justify-content: center;
             background: var(--bg-tertiary);
-            border-radius: 6px;
-            font-size: 13px;
+            border-radius: 8px;
+            font-size: 14px;
             cursor: pointer;
-            border: 0.33px solid var(--border-light);
+            border: 0.5px solid var(--border-light);
         }
         .day.free { background: var(--accent-soft); color: var(--accent); font-weight: 500; }
         .day.partial { background: var(--accent-secondary-soft); color: var(--accent-secondary); }
         .day.booked { opacity: 0.4; cursor: not-allowed; }
-        .day.selected { outline: 1.5px solid var(--accent); }
+        .day.selected { outline: 2px solid var(--accent); }
 
         .time-slots {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 5px;
-            margin: 12px 0;
+            gap: 6px;
+            margin: 16px 0;
         }
         .time-slot {
-            padding: 8px;
+            padding: 10px;
             text-align: center;
             background: var(--bg-tertiary);
-            border-radius: 8px;
-            font-size: 13px;
+            border-radius: 10px;
+            font-size: 14px;
             cursor: pointer;
-            border: 0.33px solid var(--border-light);
+            border: 0.5px solid var(--border-light);
         }
         .time-slot.selected { background: var(--accent); color: white; }
 
         .modal-footer {
             display: flex;
-            gap: 6px;
-            margin-top: 12px;
+            gap: 8px;
+            margin-top: 16px;
         }
         .modal-footer button {
             flex: 1;
-            padding: 10px;
-            border-radius: 12px;
+            padding: 12px;
+            border-radius: 14px;
             border: none;
-            font-weight: 560;
-            font-size: 14px;
+            font-weight: 600;
+            font-size: 15px;
             cursor: pointer;
         }
         .btn-primary { background: var(--accent); color: white; }
         .btn-secondary { background: var(--bg-tertiary); color: var(--text-primary); }
 
         .footer {
-            padding: 16px 12px 6px;
-            font-size: 12px;
+            padding: 20px 16px 8px;
+            font-size: 13px;
             color: var(--text-tertiary);
             display: flex;
             justify-content: space-between;
-            border-top: 0.33px solid var(--separator);
-            margin-top: 10px;
         }
 
         .toast {
             position: fixed;
-            bottom: 24px;
+            bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
             background: var(--accent);
             color: white;
-            padding: 10px 20px;
-            border-radius: 30px;
+            padding: 12px 24px;
+            border-radius: 40px;
             font-weight: 500;
-            font-size: 14px;
+            font-size: 15px;
             opacity: 0;
             transition: opacity 0.2s;
             pointer-events: none;
@@ -531,65 +546,49 @@
         </div>
     </div>
 
-    <!-- Админ-панель (видна только админу) -->
+    <!-- Админ-панель -->
     <div class="admin-panel" id="adminPanel">
         <div class="admin-title"><i class="fas fa-lock"></i> Админ-панель</div>
-        
-        <div class="admin-section">
-            <h4>Название студии</h4>
-            <input type="text" id="editStudioName" class="admin-input" placeholder="Ink">
-        </div>
-
-        <div class="admin-section">
-            <h4>Ссылки</h4>
-            <input type="text" id="editVkLink" class="admin-input" placeholder="VK ссылка">
-            <input type="text" id="editInstLink" class="admin-input" placeholder="Instagram ссылка">
-            <input type="text" id="editTgLink" class="admin-input" placeholder="Telegram ссылка">
-            <input type="text" id="editSupportLink" class="admin-input" placeholder="Поддержка (чат)">
-        </div>
-
-        <div class="admin-section">
-            <h4>Инструкции по уходу</h4>
-            <input type="text" id="editCare1Title" class="admin-input" placeholder="Заголовок 1">
-            <textarea id="editCare1Text" class="admin-input" rows="2" placeholder="Текст 1"></textarea>
-            <input type="text" id="editCare2Title" class="admin-input" placeholder="Заголовок 2">
-            <textarea id="editCare2Text" class="admin-input" rows="2" placeholder="Текст 2"></textarea>
-            <input type="text" id="editCare3Title" class="admin-input" placeholder="Заголовок 3">
-            <textarea id="editCare3Text" class="admin-input" rows="2" placeholder="Текст 3"></textarea>
-        </div>
-
-        <div class="admin-section">
-            <h4>Мастера (JSON)</h4>
-            <textarea id="editMasters" class="admin-input" rows="6" placeholder="Мастера в JSON"></textarea>
-        </div>
-
+        <div class="admin-section"><h4>Название студии</h4><input type="text" id="editStudioName" class="admin-input"></div>
+        <div class="admin-section"><h4>Ссылки</h4><input type="text" id="editVkLink" class="admin-input" placeholder="VK"><input type="text" id="editInstLink" class="admin-input" placeholder="Inst"><input type="text" id="editTgLink" class="admin-input" placeholder="TG"></div>
+        <div class="admin-section"><h4>Инструкции</h4><input type="text" id="editCare1Title" class="admin-input"><textarea id="editCare1Text" class="admin-input" rows="2"></textarea><input type="text" id="editCare2Title" class="admin-input"><textarea id="editCare2Text" class="admin-input" rows="2"></textarea><input type="text" id="editCare3Title" class="admin-input"><textarea id="editCare3Text" class="admin-input" rows="2"></textarea></div>
+        <div class="admin-section"><h4>Мастера (JSON)</h4><textarea id="editMasters" class="admin-input" rows="6"></textarea></div>
         <div class="admin-section">
             <button class="admin-btn-sm" onclick="saveAllSettings()"><i class="fas fa-save"></i> Сохранить</button>
-            <button class="admin-btn-sm admin-btn-outline" onclick="exportData()"><i class="fas fa-download"></i> Экспорт</button>
-            <button class="admin-btn-sm admin-btn-outline" onclick="importData()"><i class="fas fa-upload"></i> Импорт</button>
+            <button class="admin-btn-sm admin-btn-outline" onclick="exportData()">Экспорт</button>
+            <button class="admin-btn-sm admin-btn-outline" onclick="importData()">Импорт</button>
         </div>
-        <p style="font-size:11px; color:var(--text-tertiary); margin-top:8px;">Ваш ID: <span id="userIdDisplay"></span></p>
+        <p style="font-size:12px; color:var(--text-tertiary); margin-top:10px;">Ваш ID: <span id="userIdDisplay"></span></p>
     </div>
 
+    <!-- Соцсети -->
     <div class="actions">
-        <a href="#" class="action-btn vk" id="vkBtn" target="_blank"><i class="fab fa-vk"></i> VK</a>
-        <a href="#" class="action-btn inst" id="instBtn" target="_blank"><i class="fab fa-instagram"></i> Inst</a>
-        <a href="#" class="action-btn tg" id="tgBtn" target="_blank"><i class="fab fa-telegram-plane"></i> TG</a>
-        <div class="action-btn support" id="supportBtn"><i class="fas fa-headset"></i> Поддержка</div>
+        <a href="#" class="action-btn vk" id="vkBtn"><i class="fab fa-vk"></i> VK</a>
+        <a href="#" class="action-btn inst" id="instBtn"><i class="fab fa-instagram"></i> Inst</a>
+        <a href="#" class="action-btn tg" id="tgBtn"><i class="fab fa-telegram-plane"></i> TG</a>
     </div>
 
-    <div class="section-head"><h2><i class="fas fa-hand-holding-heart"></i> Уход</h2><a href="#" class="link">Подробнее →</a></div>
+    <!-- Уход -->
+    <div class="section-head"><h2><i class="fas fa-hand-holding-heart"></i> Уход</h2></div>
     <div class="care-list" id="careContainer"></div>
 
-    <div class="section-head"><h2><i class="fas fa-user-group"></i> Мастера</h2><a href="#" class="link">Все →</a></div>
+    <!-- Мастера -->
+    <div class="section-head"><h2><i class="fas fa-user-group"></i> Мастера</h2></div>
     <div class="masters" id="mastersContainer"></div>
 
-    <div class="section-head"><h2><i class="fas fa-grid-2"></i> Работы</h2><a href="#" class="link">Все →</a></div>
+    <!-- Кнопки записи/чата -->
+    <div class="middle-actions">
+        <button class="primary-btn" id="bookBtn"><i class="fas fa-calendar"></i> Запись</button>
+        <button class="secondary-btn" id="chatBtn"><i class="fas fa-comment"></i> Чат</button>
+    </div>
+
+    <!-- Работы -->
+    <div class="section-head"><h2><i class="fas fa-grid-2"></i> Работы</h2></div>
     <div class="gallery" id="galleryContainer"></div>
 
-    <div class="bottom-actions">
-        <button class="primary-btn" id="bookBtn"><i class="fas fa-calendar"></i> Запись к мастеру</button>
-        <button class="secondary-btn" id="chatBtn"><i class="fas fa-comment"></i> Чат с мастером</button>
+    <!-- Поддержка внизу -->
+    <div class="support-bottom">
+        <div class="support-btn" id="supportBtn"><i class="fas fa-headset"></i> Поддержка</div>
     </div>
 
     <div class="footer"><span>© 2026 <span id="footerStudioName">Ink</span> Studio</span><span>VK Mini App</span></div>
@@ -600,13 +599,13 @@
     <div class="modal-content">
         <div class="modal-header"><h3 id="modalTitle">Выберите мастера</h3><button class="close-modal"><i class="fas fa-times"></i></button></div>
         <div class="masters-list" id="mastersList"></div>
-        <div class="modal-footer" style="margin-top:12px;"><button class="btn-secondary close-modal">Отмена</button></div>
+        <div class="modal-footer"><button class="btn-secondary close-modal">Отмена</button></div>
     </div>
 </div>
 
 <div class="modal" id="calendarModal">
     <div class="modal-content">
-        <div class="modal-header"><h3 id="calendarTitle">Запись к Анне</h3><button class="close-calendar"><i class="fas fa-times"></i></button></div>
+        <div class="modal-header"><h3 id="calendarTitle">Запись</h3><button class="close-calendar"><i class="fas fa-times"></i></button></div>
         <div class="weekdays"><span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span></div>
         <div class="days" id="daysContainer"></div>
         <div class="time-slots" id="timeSlots"></div>
@@ -621,10 +620,7 @@
 
 <script>
     (function(){
-        // Инициализация VK Bridge
         const bridge = window.vkBridge;
-        
-        // Данные по умолчанию
         let appData = {
             studioName: 'Ink',
             vkLink: '#',
@@ -647,338 +643,126 @@
         };
 
         let currentUserId = null;
-        const ADMIN_IDS = [630691351]; // Заполните свои ID ВКонтакте (числовые)
-
+        const ADMIN_IDS = [630691351];
         let selectedMasterId = 'anna';
         let currentMode = 'book';
         let selectedMasterForAction = null;
         let selectedDate = null, selectedTime = null;
 
-        // Загрузка данных из Storage
         async function loadData() {
-            try {
-                const keys = await bridge.send('VKWebAppStorageGet', { keys: ['appData'] });
-                if (keys.keys[0]?.value) {
-                    appData = JSON.parse(keys.keys[0].value);
-                }
-            } catch(e) {}
+            try { const keys = await bridge.send('VKWebAppStorageGet', { keys: ['appData'] }); if (keys.keys[0]?.value) appData = JSON.parse(keys.keys[0].value); } catch(e) {}
             applyData();
         }
 
         function applyData() {
             document.getElementById('studioName').textContent = appData.studioName;
             document.getElementById('footerStudioName').textContent = appData.studioName;
-            
             document.getElementById('vkBtn').href = appData.vkLink;
             document.getElementById('instBtn').href = appData.instLink;
             document.getElementById('tgBtn').href = appData.tgLink;
-            
-            renderCare();
-            renderMasters();
-            renderGallery(selectedMasterId);
-            
-            // Заполняем админ-поля
+            renderCare(); renderMasters(); renderGallery(selectedMasterId);
             document.getElementById('editStudioName').value = appData.studioName;
             document.getElementById('editVkLink').value = appData.vkLink;
             document.getElementById('editInstLink').value = appData.instLink;
             document.getElementById('editTgLink').value = appData.tgLink;
-            document.getElementById('editSupportLink').value = appData.supportLink;
-            
             document.getElementById('editCare1Title').value = appData.care[0]?.title || '';
             document.getElementById('editCare1Text').value = appData.care[0]?.text || '';
             document.getElementById('editCare2Title').value = appData.care[1]?.title || '';
             document.getElementById('editCare2Text').value = appData.care[1]?.text || '';
             document.getElementById('editCare3Title').value = appData.care[2]?.title || '';
             document.getElementById('editCare3Text').value = appData.care[2]?.text || '';
-            
             document.getElementById('editMasters').value = JSON.stringify(appData.masters, null, 2);
         }
 
         function renderCare() {
-            const container = document.getElementById('careContainer');
-            container.innerHTML = appData.care.map((c, i) => `
-                <div class="care-item">
-                    <div class="care-header" onclick="toggleCare(this)">
-                        <i class="fas ${i===0?'fa-band-aid':i===1?'fa-pump-medical':'fa-sun'}"></i>
-                        <span class="title">${c.title}</span>
-                        <i class="fas fa-chevron-right chevron"></i>
-                    </div>
-                    <div class="care-content">${c.text}</div>
-                </div>
+            document.getElementById('careContainer').innerHTML = appData.care.map((c, i) => `
+                <div class="care-item"><div class="care-header" onclick="toggleCare(this)"><i class="fas ${i===0?'fa-band-aid':i===1?'fa-pump-medical':'fa-sun'}"></i><span class="title">${c.title}</span><i class="fas fa-chevron-right chevron"></i></div><div class="care-content">${c.text}</div></div>
             `).join('');
         }
 
         function renderMasters() {
-            const container = document.getElementById('mastersContainer');
-            container.innerHTML = appData.masters.map(m => `
-                <div class="master-card ${m.id === selectedMasterId ? 'selected' : ''}" data-master-id="${m.id}">
-                    <div class="master-avatar"><i class="fas ${m.icon}"></i></div>
-                    <h4>${m.name}</h4>
-                    <p>${m.spec}</p>
-                    <div class="selected-indicator"><i class="fas fa-check-circle"></i> выбран</div>
-                </div>
-            `).join('');
-            container.querySelectorAll('.master-card').forEach(card => {
-                card.addEventListener('click', function() {
-                    selectedMasterId = this.dataset.masterId;
-                    renderMasters();
-                    renderGallery(selectedMasterId);
-                });
-            });
+            const c = document.getElementById('mastersContainer');
+            c.innerHTML = appData.masters.map(m => `<div class="master-card ${m.id===selectedMasterId?'selected':''}" data-master-id="${m.id}"><div class="master-avatar"><i class="fas ${m.icon}"></i></div><h4>${m.name}</h4><p>${m.spec}</p><div class="selected-indicator"><i class="fas fa-check-circle"></i> выбран</div></div>`).join('');
+            c.querySelectorAll('.master-card').forEach(card => card.addEventListener('click', function(){ selectedMasterId=this.dataset.masterId; renderMasters(); renderGallery(selectedMasterId); }));
         }
 
-        function renderGallery(masterId) {
-            const master = appData.masters.find(m => m.id === masterId);
-            if (!master) return;
-            document.getElementById('galleryContainer').innerHTML = master.works.map(w => `
-                <a href="#" class="gallery-item">
-                    <i class="fas ${w.icon}"></i><span>${w.name}</span>
-                    ${w.badge ? '<span class="gallery-badge">new</span>' : ''}
-                </a>
-            `).join('');
+        function renderGallery(mid) {
+            const m = appData.masters.find(m => m.id === mid); if(!m) return;
+            document.getElementById('galleryContainer').innerHTML = m.works.map(w => `<a href="#" class="gallery-item"><i class="fas ${w.icon}"></i><span>${w.name}</span>${w.badge?'<span class="gallery-badge">new</span>':''}</a>`).join('');
         }
 
-        // Сохранение
         async function saveAllSettings() {
             appData.studioName = document.getElementById('editStudioName').value;
             appData.vkLink = document.getElementById('editVkLink').value;
             appData.instLink = document.getElementById('editInstLink').value;
             appData.tgLink = document.getElementById('editTgLink').value;
-            appData.supportLink = document.getElementById('editSupportLink').value;
-            
             appData.care = [
                 { title: document.getElementById('editCare1Title').value, text: document.getElementById('editCare1Text').value },
                 { title: document.getElementById('editCare2Title').value, text: document.getElementById('editCare2Text').value },
                 { title: document.getElementById('editCare3Title').value, text: document.getElementById('editCare3Text').value }
             ];
-            
-            try {
-                appData.masters = JSON.parse(document.getElementById('editMasters').value);
-            } catch(e) {
-                showToast('Ошибка JSON в мастерах');
-                return;
-            }
-            
-            try {
-                await bridge.send('VKWebAppStorageSet', { key: 'appData', value: JSON.stringify(appData) });
-                showToast('Сохранено!');
-                applyData();
-            } catch(e) {
-                showToast('Ошибка сохранения');
-            }
+            try { appData.masters = JSON.parse(document.getElementById('editMasters').value); } catch(e) { showToast('Ошибка JSON'); return; }
+            try { await bridge.send('VKWebAppStorageSet', { key: 'appData', value: JSON.stringify(appData) }); showToast('Сохранено!'); applyData(); } catch(e) { showToast('Ошибка сохранения'); }
         }
 
-        window.exportData = function() {
-            const blob = new Blob([JSON.stringify(appData, null, 2)], {type: 'application/json'});
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = 'ink_backup.json';
-            a.click();
-        };
-
-        window.importData = function() {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = '.json';
-            input.onchange = async (e) => {
-                const file = e.target.files[0];
-                const text = await file.text();
-                try {
-                    appData = JSON.parse(text);
-                    await bridge.send('VKWebAppStorageSet', { key: 'appData', value: JSON.stringify(appData) });
-                    applyData();
-                    showToast('Импортировано!');
-                } catch(e) {
-                    showToast('Ошибка импорта');
-                }
-            };
-            input.click();
-        };
-
+        window.exportData = function() { const b = new Blob([JSON.stringify(appData,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='ink_backup.json'; a.click(); };
+        window.importData = function() { const i=document.createElement('input'); i.type='file'; i.accept='.json'; i.onchange=async(e)=>{ const f=e.target.files[0]; const t=await f.text(); try{ appData=JSON.parse(t); await bridge.send('VKWebAppStorageSet',{key:'appData',value:JSON.stringify(appData)}); applyData(); showToast('Импортировано!'); }catch(e){ showToast('Ошибка импорта'); }}; i.click(); };
         window.saveAllSettings = saveAllSettings;
 
-        // Проверка админа
         async function checkAdmin() {
-            try {
-                const user = await bridge.send('VKWebAppGetUserInfo');
-                currentUserId = user.id;
-                document.getElementById('userIdDisplay').textContent = user.id;
-                
-                // Проверяем, является ли пользователь админом
-                if (ADMIN_IDS.includes(user.id) || ADMIN_IDS.length === 0) {
-                    document.getElementById('adminToggleBtn').style.display = 'block';
-                }
-            } catch(e) {}
+            try { const u = await bridge.send('VKWebAppGetUserInfo'); currentUserId = u.id; document.getElementById('userIdDisplay').textContent = u.id; if(ADMIN_IDS.includes(u.id)||ADMIN_IDS.length===0) document.getElementById('adminToggleBtn').style.display='block'; } catch(e) {}
         }
 
-        // Тема
-        const html = document.documentElement;
-        const themeBtn = document.getElementById('themeToggleBtn');
-        const themeIcon = document.getElementById('themeIcon');
-        
-        async function loadTheme() {
-            try {
-                const keys = await bridge.send('VKWebAppStorageGet', { keys: ['userTheme'] });
-                const theme = keys.keys[0]?.value || 'auto';
-                applyTheme(theme);
-            } catch(e) {
-                applyTheme('auto');
-            }
-        }
-        
-        function applyTheme(m) {
-            if (m === 'light') { html.setAttribute('data-theme', 'light'); themeIcon.className = 'fas fa-sun'; }
-            else if (m === 'dark') { html.setAttribute('data-theme', 'dark'); themeIcon.className = 'fas fa-moon'; }
-            else { html.removeAttribute('data-theme'); themeIcon.className = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'fas fa-moon' : 'fas fa-sun'; }
-        }
-        
-        async function cycleTheme() {
-            const current = html.getAttribute('data-theme') || 'auto';
-            let next;
-            if (current === 'auto') next = 'light';
-            else if (current === 'light') next = 'dark';
-            else next = 'auto';
-            
-            applyTheme(next);
-            try {
-                await bridge.send('VKWebAppStorageSet', { key: 'userTheme', value: next });
-            } catch(e) {}
-        }
-        
+        const html = document.documentElement, themeBtn = document.getElementById('themeToggleBtn'), themeIcon = document.getElementById('themeIcon');
+        async function loadTheme() { try { const k = await bridge.send('VKWebAppStorageGet',{keys:['userTheme']}); applyTheme(k.keys[0]?.value||'auto'); } catch(e) { applyTheme('auto'); } }
+        function applyTheme(m) { if(m==='light'){ html.setAttribute('data-theme','light'); themeIcon.className='fas fa-sun'; } else if(m==='dark'){ html.setAttribute('data-theme','dark'); themeIcon.className='fas fa-moon'; } else { html.removeAttribute('data-theme'); themeIcon.className=window.matchMedia('(prefers-color-scheme:dark)').matches?'fas fa-moon':'fas fa-sun'; } }
+        async function cycleTheme() { const c = html.getAttribute('data-theme')||'auto'; let n; if(c==='auto') n='light'; else if(c==='light') n='dark'; else n='auto'; applyTheme(n); try { await bridge.send('VKWebAppStorageSet',{key:'userTheme',value:n}); } catch(e) {} }
         themeBtn.addEventListener('click', cycleTheme);
 
-        // Остальной функционал
-        window.toggleCare = function(h) { 
-            const i = h.closest('.care-item'); 
-            document.querySelectorAll('.care-item').forEach(c => { if(c!==i) c.classList.remove('active'); }); 
-            i.classList.toggle('active'); 
-        };
+        window.toggleCare = function(h) { const i = h.closest('.care-item'); document.querySelectorAll('.care-item').forEach(c => { if(c!==i) c.classList.remove('active'); }); i.classList.toggle('active'); };
+        function showToast(m) { const t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2000); }
 
-        function showToast(m) { 
-            const t = document.getElementById('toast'); 
-            t.textContent = m; 
-            t.classList.add('show'); 
-            setTimeout(() => t.classList.remove('show'), 2000); 
-        }
-
-        // Инициализация
         (async function init() {
-            await bridge.send('VKWebAppInit');
-            await checkAdmin();
-            await loadData();
-            await loadTheme();
-            
-            // Кнопка админ-панели
-            document.getElementById('adminToggleBtn').addEventListener('click', () => {
-                document.getElementById('adminPanel').classList.toggle('active');
-            });
-            
-            // Поддержка
-            document.getElementById('supportBtn').addEventListener('click', () => {
-                if (appData.supportLink && appData.supportLink !== '#') {
-                    bridge.send('VKWebAppOpenLink', { link: appData.supportLink });
-                } else {
-                    showToast('Ссылка на поддержку не указана');
-                }
-            });
-            
-            // Остальные обработчики
-            document.getElementById('bookBtn').addEventListener('click', ()=>{ 
-                currentMode='book'; 
-                document.getElementById('modalTitle').textContent='Выберите мастера'; 
-                renderMastersList(); 
-                document.getElementById('masterSelectModal').classList.add('active'); 
-            });
-            document.getElementById('chatBtn').addEventListener('click', ()=>{ 
-                currentMode='chat'; 
-                document.getElementById('modalTitle').textContent='Выберите мастера'; 
-                renderMastersList(); 
-                document.getElementById('masterSelectModal').classList.add('active'); 
-            });
+            await bridge.send('VKWebAppInit'); await checkAdmin(); await loadData(); await loadTheme();
+            document.getElementById('adminToggleBtn').addEventListener('click',()=>{ document.getElementById('adminPanel').classList.toggle('active'); });
+            document.getElementById('supportBtn').addEventListener('click',()=>{ if(appData.supportLink&&appData.supportLink!=='#') bridge.send('VKWebAppOpenLink',{link:appData.supportLink}); else showToast('Ссылка не указана'); });
+            document.getElementById('bookBtn').addEventListener('click',()=>{ currentMode='book'; document.getElementById('modalTitle').textContent='Выберите мастера'; renderMastersList(); document.getElementById('masterSelectModal').classList.add('active'); });
+            document.getElementById('chatBtn').addEventListener('click',()=>{ currentMode='chat'; document.getElementById('modalTitle').textContent='Выберите мастера'; renderMastersList(); document.getElementById('masterSelectModal').classList.add('active'); });
         })();
 
         function renderMastersList() {
-            const list = document.getElementById('mastersList');
-            list.innerHTML = appData.masters.map(m => `
-                <div class="master-select-item" data-master-id="${m.id}">
-                    <div class="master-select-avatar"><i class="fas ${m.icon}"></i></div>
-                    <div class="master-select-info"><h4>${m.name}</h4><p>${m.spec}</p></div>
-                </div>
-            `).join('');
-            list.querySelectorAll('.master-select-item').forEach(el => {
-                el.addEventListener('click', function() {
-                    const master = appData.masters.find(m => m.id === this.dataset.masterId);
-                    selectedMasterForAction = master;
-                    document.getElementById('masterSelectModal').classList.remove('active');
-                    if (currentMode === 'book') {
-                        openCalendar(master);
-                    } else {
-                        if (master.chat && master.chat !== '#') {
-                            bridge.send('VKWebAppOpenLink', { link: master.chat });
-                        } else {
-                            showToast(`Чат с ${master.name} не настроен`);
-                        }
-                    }
-                });
-            });
+            const l = document.getElementById('mastersList');
+            l.innerHTML = appData.masters.map(m => `<div class="master-select-item" data-master-id="${m.id}"><div class="master-select-avatar"><i class="fas ${m.icon}"></i></div><div class="master-select-info"><h4>${m.name}</h4><p>${m.spec}</p></div></div>`).join('');
+            l.querySelectorAll('.master-select-item').forEach(el => el.addEventListener('click', function(){
+                const master = appData.masters.find(m => m.id === this.dataset.masterId); selectedMasterForAction = master;
+                document.getElementById('masterSelectModal').classList.remove('active');
+                if(currentMode==='book') { openCalendar(master); } else { if(master.chat&&master.chat!=='#') bridge.send('VKWebAppOpenLink',{link:master.chat}); else showToast(`Чат с ${master.name} не настроен`); }
+            }));
         }
 
         function openCalendar(m) {
-            document.getElementById('calendarTitle').textContent = `Запись к ${m.name}`;
-            generateCalendar(m.calendar);
-            generateTimeSlots();
-            document.getElementById('calendarModal').classList.add('active');
+            document.getElementById('calendarTitle').textContent = `Запись к ${m.name}`; generateCalendar(m.calendar); generateTimeSlots(); document.getElementById('calendarModal').classList.add('active');
         }
 
         function generateCalendar(mid) {
-            const t = new Date(); const days = [];
-            for (let i=1; i<=30; i++) { 
-                const d = new Date(t.getFullYear(), t.getMonth(), i); 
-                if (d.getMonth()!==t.getMonth()) continue;
-                let s = 'free'; 
-                if (mid==='anna'&&i%3===0) s='booked'; 
-                else if (mid==='max'&&i%4===0) s='partial'; 
-                else if (mid==='eva'&&i%5===0) s='booked'; 
-                if (i%7===0) s='partial';
-                days.push({day:i, status:s}); 
-            }
-            const container = document.getElementById('daysContainer');
-            container.innerHTML = days.map(d => `<div class="day ${d.status}" data-day="${d.day}">${d.day}</div>`).join('');
-            container.querySelectorAll('.day').forEach(el => { 
-                el.addEventListener('click', function() { 
-                    if(this.classList.contains('booked')) return; 
-                    container.querySelectorAll('.day').forEach(d=>d.classList.remove('selected')); 
-                    this.classList.add('selected'); 
-                    selectedDate = this.dataset.day; 
-                }); 
-            });
+            const t = new Date(), days = [];
+            for(let i=1; i<=30; i++) { const d = new Date(t.getFullYear(), t.getMonth(), i); if(d.getMonth()!==t.getMonth()) continue;
+                let s = 'free'; if(mid==='anna'&&i%3===0) s='booked'; else if(mid==='max'&&i%4===0) s='partial'; else if(mid==='eva'&&i%5===0) s='booked'; if(i%7===0) s='partial';
+                days.push({day:i, status:s}); }
+            const c = document.getElementById('daysContainer'); c.innerHTML = days.map(d => `<div class="day ${d.status}" data-day="${d.day}">${d.day}</div>`).join('');
+            c.querySelectorAll('.day').forEach(el => el.addEventListener('click', function(){ if(this.classList.contains('booked')) return; c.querySelectorAll('.day').forEach(d=>d.classList.remove('selected')); this.classList.add('selected'); selectedDate = this.dataset.day; }));
         }
 
         function generateTimeSlots() {
-            const slots = document.getElementById('timeSlots');
-            slots.innerHTML = '';
-            ['10:00','12:00','14:00','16:00','18:00','20:00'].forEach(t => { 
-                const div = document.createElement('div'); 
-                div.className = 'time-slot'; 
-                div.textContent = t; 
-                div.addEventListener('click', function() { 
-                    slots.querySelectorAll('.time-slot').forEach(s=>s.classList.remove('selected')); 
-                    this.classList.add('selected'); 
-                    selectedTime = this.textContent; 
-                }); 
-                slots.appendChild(div); 
-            });
+            const s = document.getElementById('timeSlots'); s.innerHTML = '';
+            ['10:00','12:00','14:00','16:00','18:00','20:00'].forEach(t => { const d=document.createElement('div'); d.className='time-slot'; d.textContent=t; d.addEventListener('click', function(){ s.querySelectorAll('.time-slot').forEach(sl=>sl.classList.remove('selected')); this.classList.add('selected'); selectedTime=this.textContent; }); s.appendChild(d); });
         }
 
-        // Закрытие модалок
         document.querySelectorAll('.close-modal').forEach(b=>b.addEventListener('click',()=>document.getElementById('masterSelectModal').classList.remove('active')));
         document.querySelectorAll('.close-calendar').forEach(b=>b.addEventListener('click',()=>document.getElementById('calendarModal').classList.remove('active')));
-        
         document.getElementById('confirmBookingBtn').addEventListener('click', ()=>{
-            if(!selectedDate||!selectedTime){showToast('Выберите дату и время');return;}
-            if(!selectedMasterForAction){showToast('Мастер не выбран');return;}
-            showToast(`Запись к ${selectedMasterForAction.name} на ${selectedDate} число в ${selectedTime}.`);
-            document.getElementById('calendarModal').classList.remove('active');
+            if(!selectedDate||!selectedTime){showToast('Выберите дату и время');return;} if(!selectedMasterForAction){showToast('Мастер не выбран');return;}
+            showToast(`Запись к ${selectedMasterForAction.name} на ${selectedDate} число в ${selectedTime}.`); document.getElementById('calendarModal').classList.remove('active');
         });
     })();
 </script>
