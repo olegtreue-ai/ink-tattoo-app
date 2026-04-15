@@ -41,7 +41,7 @@
             --btn-active-text: #ffffff;
         }
 
-        /* Тёмная тема в стиле VK (без синего оттенка) */
+        /* Тёмная тема в стиле VK */
         [data-theme="dark"] {
             --bg-primary: #19191a;
             --bg-secondary: #222222;
@@ -86,7 +86,7 @@
             background: var(--bg-primary);
         }
 
-        /* Шапка — прижата к верху, скруглённые нижние углы */
+        /* Шапка без текста Ink */
         .header {
             display: flex;
             align-items: center;
@@ -127,7 +127,7 @@
             color: var(--accent) !important;
         }
 
-        /* Соцсети */
+        /* Соцсети — только иконки */
         .actions {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -138,17 +138,17 @@
         .action-btn {
             background: var(--btn-default-bg);
             border-radius: 14px;
-            padding: 12px 6px;
+            padding: 14px 6px;
             text-align: center;
             text-decoration: none;
             color: var(--btn-default-text);
             font-weight: 500;
-            font-size: 13px;
+            font-size: 0;
             transition: all 0.12s;
             border: 1px solid var(--border-light);
             cursor: pointer;
         }
-        .action-btn i { display: block; font-size: 24px; margin-bottom: 6px; }
+        .action-btn i { font-size: 26px; }
         .action-btn.vk i { color: var(--vk-blue); }
         .action-btn.inst i { color: var(--inst-pink); }
         .action-btn.tg i { color: var(--tg-blue); }
@@ -174,7 +174,7 @@
         }
         .section-head h2 i { color: var(--accent); font-size: 16px; }
 
-        /* Уход */
+        /* Уход — независимое раскрытие */
         .care-list { padding: 0 16px; }
         .care-item { border-bottom: 0.5px solid var(--separator); }
         .care-header {
@@ -240,7 +240,7 @@
         }
         .master-card.selected .selected-indicator { opacity: 1; }
 
-        /* Кнопки записи/чата */
+        /* Кнопки записи/чата — одинаковые цвета */
         .middle-actions {
             padding: 16px 16px 8px;
             display: flex;
@@ -263,9 +263,7 @@
             transition: all 0.12s;
         }
         .secondary-btn {
-            background: var(--btn-default-bg);
-            color: var(--text-primary);
-            border: 1px solid var(--border-light);
+            background: var(--accent);
         }
         .primary-btn:active, .secondary-btn:active { transform: scale(0.98); opacity: 0.9; }
 
@@ -538,7 +536,7 @@
 <body>
 <div class="page">
     <div class="header">
-        <div class="logo"><i class="fas fa-sparkles"></i> <span id="studioName">Ink</span></div>
+        <div class="logo"><i class="fas fa-sparkles"></i> <span id="studioName"></span></div>
         <div class="header-actions">
             <button id="adminToggleBtn" class="admin-btn" style="display:none;"><i class="fas fa-user-cog"></i></button>
         </div>
@@ -559,11 +557,11 @@
         <p style="font-size:12px; color:var(--text-tertiary); margin-top:10px;">Ваш ID: <span id="userIdDisplay"></span></p>
     </div>
 
-    <!-- Соцсети -->
+    <!-- Соцсети — только иконки -->
     <div class="actions">
-        <a href="#" class="action-btn vk" id="vkBtn"><i class="fab fa-vk"></i> VK</a>
-        <a href="#" class="action-btn inst" id="instBtn"><i class="fab fa-instagram"></i> Inst</a>
-        <a href="#" class="action-btn tg" id="tgBtn"><i class="fab fa-telegram-plane"></i> TG</a>
+        <a href="#" class="action-btn vk" id="vkBtn"><i class="fab fa-vk"></i></a>
+        <a href="#" class="action-btn inst" id="instBtn"><i class="fab fa-instagram"></i></a>
+        <a href="#" class="action-btn tg" id="tgBtn"><i class="fab fa-telegram-plane"></i></a>
     </div>
 
     <!-- Уход -->
@@ -574,7 +572,7 @@
     <div class="section-head"><h2><i class="fas fa-user-group"></i> Мастера</h2></div>
     <div class="masters" id="mastersContainer"></div>
 
-    <!-- Кнопки записи/чата -->
+    <!-- Кнопки записи/чата — одинаковый цвет -->
     <div class="middle-actions">
         <button class="primary-btn" id="bookBtn"><i class="fas fa-calendar"></i> Запись</button>
         <button class="secondary-btn" id="chatBtn"><i class="fas fa-comment"></i> Чат</button>
@@ -711,22 +709,18 @@
             try { const u = await bridge.send('VKWebAppGetUserInfo'); currentUserId = u.id; document.getElementById('userIdDisplay').textContent = u.id; if(ADMIN_IDS.includes(u.id)||ADMIN_IDS.length===0) document.getElementById('adminToggleBtn').style.display='block'; } catch(e) {}
         }
 
-        // Автоматическая тема из VK (без кнопки переключения)
         const html = document.documentElement;
         
         async function loadTheme() {
             try {
-                // Получаем тему из VK
                 const theme = await bridge.send('VKWebAppGetTheme');
                 applyTheme(theme);
-                // Подписываемся на изменения темы
                 bridge.subscribe((e) => {
                     if (e.detail?.type === 'VKWebAppUpdateTheme') {
                         applyTheme(e.detail.data);
                     }
                 });
             } catch(e) {
-                // Fallback на системную тему
                 const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
                 applyTheme({ scheme: isDark ? 'dark' : 'light' });
             }
@@ -741,7 +735,12 @@
             }
         }
 
-        window.toggleCare = function(h) { const i = h.closest('.care-item'); document.querySelectorAll('.care-item').forEach(c => { if(c!==i) c.classList.remove('active'); }); i.classList.toggle('active'); };
+        // Независимое раскрытие ухода
+        window.toggleCare = function(h) { 
+            const i = h.closest('.care-item'); 
+            i.classList.toggle('active'); 
+        };
+        
         function showToast(m) { const t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2000); }
 
         (async function init() {
