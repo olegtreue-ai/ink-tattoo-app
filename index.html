@@ -13,7 +13,6 @@
             box-sizing: border-box;
         }
 
-        /* Светлая тема */
         :root,
         [data-theme="light"] {
             --bg-primary: #f2f2f7;
@@ -41,7 +40,6 @@
             --btn-active-text: #ffffff;
         }
 
-        /* Тёмная тема в стиле VK */
         [data-theme="dark"] {
             --bg-primary: #19191a;
             --bg-secondary: #222222;
@@ -86,7 +84,6 @@
             background: var(--bg-primary);
         }
 
-        /* Шапка без текста Ink */
         .header {
             display: flex;
             align-items: center;
@@ -127,7 +124,6 @@
             color: var(--accent) !important;
         }
 
-        /* Соцсети — только иконки */
         .actions {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -159,7 +155,6 @@
         }
         .action-btn:active i { color: var(--btn-active-text); }
 
-        /* Заголовки секций */
         .section-head {
             padding: 18px 16px 8px;
         }
@@ -174,7 +169,6 @@
         }
         .section-head h2 i { color: var(--accent); font-size: 16px; }
 
-        /* Уход — независимое раскрытие */
         .care-list { padding: 0 16px; }
         .care-item { border-bottom: 0.5px solid var(--separator); }
         .care-header {
@@ -186,7 +180,7 @@
         }
         .care-header i:first-child { color: var(--accent-secondary); font-size: 20px; width: 22px; }
         .care-header .title { flex: 1; font-weight: 500; font-size: 15px; }
-        .care-header .chevron { color: var(--text-tertiary); font-size: 14px; transition: transform 0.25s; }
+        .care-header .chevron { color: var(--text-tertiary); font-size: 14px; transition: transform 0.2s; }
         .care-item.active .chevron { transform: rotate(90deg); }
 
         .care-content {
@@ -195,11 +189,10 @@
             padding: 0;
             color: var(--text-secondary);
             font-size: 14px;
-            transition: max-height 0.3s;
+            transition: max-height 0.25s ease, padding 0.25s ease;
         }
-        .care-item.active .care-content { max-height: 180px; padding: 0 0 18px 34px; }
+        .care-item.active .care-content { max-height: 200px; padding: 0 0 18px 34px; }
 
-        /* Мастера */
         .masters {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -240,7 +233,6 @@
         }
         .master-card.selected .selected-indicator { opacity: 1; }
 
-        /* Кнопки записи/чата — одинаковые цвета */
         .middle-actions {
             padding: 16px 16px 8px;
             display: flex;
@@ -262,12 +254,9 @@
             cursor: pointer;
             transition: all 0.12s;
         }
-        .secondary-btn {
-            background: var(--accent);
-        }
+        .secondary-btn { background: var(--accent); }
         .primary-btn:active, .secondary-btn:active { transform: scale(0.98); opacity: 0.9; }
 
-        /* Галерея */
         .gallery {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -304,7 +293,6 @@
             line-height: 1;
         }
 
-        /* Поддержка */
         .support-bottom {
             padding: 16px 16px 8px;
             margin-top: 8px;
@@ -327,7 +315,16 @@
         }
         .support-btn i { color: var(--accent); font-size: 18px; }
 
-        /* Админ-панель */
+        .footer {
+            padding: 20px 16px 8px;
+            font-size: 13px;
+            color: var(--text-tertiary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Админ-панель — теперь внизу */
         .admin-panel {
             display: none;
             padding: 16px;
@@ -375,7 +372,6 @@
             color: var(--text-primary);
         }
 
-        /* Модалки */
         .modal {
             display: none;
             position: fixed;
@@ -506,14 +502,6 @@
         .btn-primary { background: var(--accent); color: white; }
         .btn-secondary { background: var(--bg-tertiary); color: var(--text-primary); }
 
-        .footer {
-            padding: 20px 16px 8px;
-            font-size: 13px;
-            color: var(--text-tertiary);
-            display: flex;
-            justify-content: space-between;
-        }
-
         .toast {
             position: fixed;
             bottom: 30px;
@@ -542,7 +530,36 @@
         </div>
     </div>
 
-    <!-- Админ-панель -->
+    <div class="actions">
+        <a href="#" class="action-btn vk" id="vkBtn"><i class="fab fa-vk"></i></a>
+        <a href="#" class="action-btn inst" id="instBtn"><i class="fab fa-instagram"></i></a>
+        <a href="#" class="action-btn tg" id="tgBtn"><i class="fab fa-telegram-plane"></i></a>
+    </div>
+
+    <div class="section-head"><h2><i class="fas fa-hand-holding-heart"></i> Уход</h2></div>
+    <div class="care-list" id="careContainer"></div>
+
+    <div class="section-head"><h2><i class="fas fa-user-group"></i> Мастера</h2></div>
+    <div class="masters" id="mastersContainer"></div>
+
+    <div class="middle-actions">
+        <button class="primary-btn" id="bookBtn"><i class="fas fa-calendar"></i> Запись</button>
+        <button class="secondary-btn" id="chatBtn"><i class="fas fa-comment"></i> Чат</button>
+    </div>
+
+    <div class="section-head"><h2><i class="fas fa-grid-2"></i> Работы</h2></div>
+    <div class="gallery" id="galleryContainer"></div>
+
+    <div class="support-bottom">
+        <div class="support-btn" id="supportBtn"><i class="fas fa-headset"></i> Поддержка</div>
+    </div>
+
+    <div class="footer">
+        <span>© 2026 <span id="footerStudioName">Ink</span> Studio</span>
+        <span>VK Mini App</span>
+    </div>
+
+    <!-- Админ-панель перенесена вниз -->
     <div class="admin-panel" id="adminPanel">
         <div class="admin-title"><i class="fas fa-lock"></i> Админ-панель</div>
         <div class="admin-section"><h4>Название студии</h4><input type="text" id="editStudioName" class="admin-input"></div>
@@ -556,38 +573,6 @@
         </div>
         <p style="font-size:12px; color:var(--text-tertiary); margin-top:10px;">Ваш ID: <span id="userIdDisplay"></span></p>
     </div>
-
-    <!-- Соцсети — только иконки -->
-    <div class="actions">
-        <a href="#" class="action-btn vk" id="vkBtn"><i class="fab fa-vk"></i></a>
-        <a href="#" class="action-btn inst" id="instBtn"><i class="fab fa-instagram"></i></a>
-        <a href="#" class="action-btn tg" id="tgBtn"><i class="fab fa-telegram-plane"></i></a>
-    </div>
-
-    <!-- Уход -->
-    <div class="section-head"><h2><i class="fas fa-hand-holding-heart"></i> Уход</h2></div>
-    <div class="care-list" id="careContainer"></div>
-
-    <!-- Мастера -->
-    <div class="section-head"><h2><i class="fas fa-user-group"></i> Мастера</h2></div>
-    <div class="masters" id="mastersContainer"></div>
-
-    <!-- Кнопки записи/чата — одинаковый цвет -->
-    <div class="middle-actions">
-        <button class="primary-btn" id="bookBtn"><i class="fas fa-calendar"></i> Запись</button>
-        <button class="secondary-btn" id="chatBtn"><i class="fas fa-comment"></i> Чат</button>
-    </div>
-
-    <!-- Работы -->
-    <div class="section-head"><h2><i class="fas fa-grid-2"></i> Работы</h2></div>
-    <div class="gallery" id="galleryContainer"></div>
-
-    <!-- Поддержка внизу -->
-    <div class="support-bottom">
-        <div class="support-btn" id="supportBtn"><i class="fas fa-headset"></i> Поддержка</div>
-    </div>
-
-    <div class="footer"><span>© 2026 <span id="footerStudioName">Ink</span> Studio</span><span>VK Mini App</span></div>
 </div>
 
 <!-- Модалки -->
@@ -651,7 +636,7 @@
         }
 
         function applyData() {
-            document.getElementById('studioName').textContent = appData.studioName;
+            document.getElementById('studioName').textContent = '';
             document.getElementById('footerStudioName').textContent = appData.studioName;
             document.getElementById('vkBtn').href = appData.vkLink;
             document.getElementById('instBtn').href = appData.instLink;
@@ -735,7 +720,6 @@
             }
         }
 
-        // Независимое раскрытие ухода
         window.toggleCare = function(h) { 
             const i = h.closest('.care-item'); 
             i.classList.toggle('active'); 
