@@ -74,7 +74,7 @@
             -webkit-font-smoothing: antialiased;
             font-size: 15px;
             padding: 0 0 20px;
-            transition: background 0.2s ease;
+            transition: background 0.2s ease, color 0.2s ease;
             margin: 0;
         }
 
@@ -118,10 +118,6 @@
             color: var(--text-primary);
             cursor: pointer;
             padding: 4px;
-        }
-
-        .admin-btn {
-            color: var(--accent) !important;
         }
 
         .actions {
@@ -324,7 +320,7 @@
             align-items: center;
         }
 
-        /* Админ-панель — теперь внизу */
+        /* Админ-панель */
         .admin-panel {
             display: none;
             padding: 16px;
@@ -519,15 +515,25 @@
             z-index: 200;
         }
         .toast.show { opacity: 1; }
+
+        /* Кнопка админ-панели в футере */
+        .footer-admin-btn {
+            background: none;
+            border: none;
+            color: var(--text-tertiary);
+            font-size: 18px;
+            cursor: pointer;
+            padding: 4px 8px;
+            display: none;
+        }
+        .footer-admin-btn.show { display: block; }
     </style>
 </head>
 <body>
 <div class="page">
     <div class="header">
         <div class="logo"><i class="fas fa-sparkles"></i> <span id="studioName"></span></div>
-        <div class="header-actions">
-            <button id="adminToggleBtn" class="admin-btn" style="display:none;"><i class="fas fa-user-cog"></i></button>
-        </div>
+        <div class="header-actions"></div>
     </div>
 
     <div class="actions">
@@ -556,10 +562,13 @@
 
     <div class="footer">
         <span>© 2026 <span id="footerStudioName">Ink</span> Studio</span>
-        <span>VK Mini App</span>
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <button id="footerAdminToggleBtn" class="footer-admin-btn"><i class="fas fa-user-cog"></i></button>
+            <span>VK Mini App</span>
+        </div>
     </div>
 
-    <!-- Админ-панель перенесена вниз -->
+    <!-- Админ-панель -->
     <div class="admin-panel" id="adminPanel">
         <div class="admin-title"><i class="fas fa-lock"></i> Админ-панель</div>
         <div class="admin-section"><h4>Название студии</h4><input type="text" id="editStudioName" class="admin-input"></div>
@@ -691,7 +700,14 @@
         window.saveAllSettings = saveAllSettings;
 
         async function checkAdmin() {
-            try { const u = await bridge.send('VKWebAppGetUserInfo'); currentUserId = u.id; document.getElementById('userIdDisplay').textContent = u.id; if(ADMIN_IDS.includes(u.id)||ADMIN_IDS.length===0) document.getElementById('adminToggleBtn').style.display='block'; } catch(e) {}
+            try { 
+                const u = await bridge.send('VKWebAppGetUserInfo'); 
+                currentUserId = u.id; 
+                document.getElementById('userIdDisplay').textContent = u.id; 
+                if(ADMIN_IDS.includes(u.id) || ADMIN_IDS.length===0) {
+                    document.getElementById('footerAdminToggleBtn').classList.add('show');
+                }
+            } catch(e) {}
         }
 
         const html = document.documentElement;
@@ -699,20 +715,19 @@
         async function loadTheme() {
             try {
                 const theme = await bridge.send('VKWebAppGetTheme');
-                applyTheme(theme);
+                applyTheme(theme.scheme);
                 bridge.subscribe((e) => {
-                    if (e.detail?.type === 'VKWebAppUpdateTheme') {
-                        applyTheme(e.detail.data);
+                    if (e.detail?.type === 'VKWebAppUpdateConfig') {
+                        applyTheme(e.detail.data.scheme);
                     }
                 });
             } catch(e) {
                 const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                applyTheme({ scheme: isDark ? 'dark' : 'light' });
+                applyTheme(isDark ? 'dark' : 'light');
             }
         }
         
-        function applyTheme(theme) {
-            const scheme = theme.scheme || theme;
+        function applyTheme(scheme) {
             if (scheme === 'dark' || scheme === 'space_gray') {
                 html.setAttribute('data-theme', 'dark');
             } else {
@@ -732,7 +747,12 @@
             await checkAdmin();
             await loadData();
             await loadTheme();
-            document.getElementById('adminToggleBtn').addEventListener('click',()=>{ document.getElementById('adminPanel').classList.toggle('active'); });
+            
+            document.getElementById('footerAdminToggleBtn').addEventListener('click', (e) => {
+                e.stopPropagation();
+                document.getElementById('adminPanel').classList.toggle('active');
+            });
+            
             document.getElementById('supportBtn').addEventListener('click',()=>{ if(appData.supportLink&&appData.supportLink!=='#') bridge.send('VKWebAppOpenLink',{link:appData.supportLink}); else showToast('Ссылка не указана'); });
             document.getElementById('bookBtn').addEventListener('click',()=>{ currentMode='book'; document.getElementById('modalTitle').textContent='Выберите мастера'; renderMastersList(); document.getElementById('masterSelectModal').classList.add('active'); });
             document.getElementById('chatBtn').addEventListener('click',()=>{ currentMode='chat'; document.getElementById('modalTitle').textContent='Выберите мастера'; renderMastersList(); document.getElementById('masterSelectModal').classList.add('active'); });
