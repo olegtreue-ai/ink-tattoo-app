@@ -19,6 +19,35 @@
             box-sizing: border-box;
         }
 
+        /* Отключаем tap highlight и outline на всех элементах */
+        * {
+            -webkit-tap-highlight-color: transparent;
+            outline: none;
+        }
+
+        /* Запрещаем выделение и контекстное меню везде */
+        body, button, a, div, .action-btn, .master-card, .care-header, 
+        .primary-btn, .secondary-btn, .support-btn, .theme-toggle-btn,
+        .admin-btn-sm, .gallery-item, .footer-admin-btn, .modal-header button {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        /* Разрешаем выделение текста только в инструкциях по уходу */
+        .care-content, .care-content * {
+            -webkit-touch-callout: text;
+            -webkit-user-select: text;
+            user-select: text;
+        }
+
+        /* Разрешаем выделение в полях ввода */
+        input, textarea {
+            -webkit-touch-callout: text;
+            -webkit-user-select: text;
+            user-select: text;
+        }
+
         :root,
         [data-theme="light"] {
             --bg-primary: #f2f2f7;
@@ -92,14 +121,12 @@
             background: var(--bg-primary);
         }
 
-        /* Шапка с кнопкой темы и затемнением для статус-бара */
         .safe-header {
             display: flex;
             align-items: center;
             justify-content: flex-end;
             padding: 20px 16px 8px;
             padding-top: calc(20px + env(safe-area-inset-top));
-           /*background: var(--status-bar-overlay);*/
             position: relative;
             z-index: 5;
         }
@@ -126,7 +153,7 @@
             color: var(--btn-active-text);
         }
 
-        /* Админ-панель сверху */
+        /* Админ-панель */
         .admin-panel {
             display: none;
             padding: 16px;
@@ -142,21 +169,40 @@
             margin-bottom: 14px;
             color: var(--accent);
         }
-        .admin-section { margin-bottom: 16px; }
+        .admin-section { 
+            margin-bottom: 20px; 
+            padding: 12px;
+            background: var(--bg-tertiary);
+            border-radius: 16px;
+            border-left: 3px solid var(--accent);
+        }
         .admin-section h4 {
+            font-size: 15px;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .admin-section h4 i {
+            color: var(--accent);
             font-size: 14px;
-            margin-bottom: 8px;
-            color: var(--text-secondary);
         }
         .admin-input {
             width: 100%;
             padding: 12px;
             border-radius: 12px;
             border: 0.5px solid var(--border-medium);
-            background: var(--bg-tertiary);
+            background: var(--bg-secondary);
             color: var(--text-primary);
             font-size: 14px;
             margin-bottom: 8px;
+        }
+        .admin-input-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+            margin-top: 8px;
         }
         .admin-btn-sm {
             background: var(--accent);
@@ -172,6 +218,12 @@
             background: transparent;
             border: 0.5px solid var(--border-medium);
             color: var(--text-primary);
+        }
+        .admin-hint {
+            font-size: 11px;
+            color: var(--text-tertiary);
+            margin-top: 4px;
+            margin-bottom: 8px;
         }
 
         /* Соцсети */
@@ -243,8 +295,11 @@
             color: var(--text-secondary);
             font-size: 14px;
             transition: max-height 0.25s ease, padding 0.25s ease;
+            line-height: 1.5;
         }
-        .care-item.active .care-content { max-height: 500px; padding: 0 0 18px 34px; }
+        .care-item.active .care-content { max-height: 600px; padding: 0 0 18px 34px; }
+        .care-content strong { color: var(--text-primary); }
+        .care-content ul, .care-content ol { padding-left: 20px; margin: 8px 0; }
 
         .masters {
             display: grid;
@@ -562,33 +617,79 @@
 </head>
 <body>
 <div class="page">
-    <!-- Шапка с кнопкой темы -->
     <div class="safe-header">
         <button class="theme-toggle-btn" id="themeToggleBtn">
             <i class="fas fa-circle-half-stroke" id="themeIcon"></i>
         </button>
     </div>
 
-    <!-- Админ-панель сверху -->
+    <!-- Админ-панель -->
     <div class="admin-panel" id="adminPanel">
         <div class="admin-title"><i class="fas fa-lock"></i> Админ-панель</div>
-        <div class="admin-section"><h4>Название студии</h4><input type="text" id="editStudioName" class="admin-input"></div>
-        <div class="admin-section"><h4>Ссылки</h4><input type="text" id="editVkLink" class="admin-input" placeholder="VK"><input type="text" id="editInstLink" class="admin-input" placeholder="Inst"><input type="text" id="editTgLink" class="admin-input" placeholder="TG"></div>
-        <div class="admin-section"><h4>Инструкции</h4><input type="text" id="editCare1Title" class="admin-input"><textarea id="editCare1Text" class="admin-input" rows="3"></textarea><input type="text" id="editCare2Title" class="admin-input"><textarea id="editCare2Text" class="admin-input" rows="3"></textarea><input type="text" id="editCare3Title" class="admin-input"><textarea id="editCare3Text" class="admin-input" rows="3"></textarea></div>
-        <div class="admin-section"><h4>Мастера (JSON)</h4><textarea id="editMasters" class="admin-input" rows="8"></textarea></div>
+        
+        <div class="admin-section">
+            <h4><i class="fas fa-store"></i> Название студии</h4>
+            <input type="text" id="editStudioName" class="admin-input" placeholder="Ink">
+            <div class="admin-hint">Отображается в футере</div>
+        </div>
+        
+        <div class="admin-section">
+            <h4><i class="fas fa-link"></i> Ссылки на соцсети и чаты</h4>
+            <div class="admin-input-label">VK (сообщество или страница)</div>
+            <input type="text" id="editVkLink" class="admin-input" placeholder="https://vk.com/...">
+            <div class="admin-input-label">Instagram</div>
+            <input type="text" id="editInstLink" class="admin-input" placeholder="https://instagram.com/...">
+            <div class="admin-input-label">Telegram</div>
+            <input type="text" id="editTgLink" class="admin-input" placeholder="https://t.me/...">
+            <div class="admin-input-label">Поддержка (ссылка на чат)</div>
+            <input type="text" id="editSupportLink" class="admin-input" placeholder="https://vk.me/...">
+        </div>
+        
+        <div class="admin-section">
+            <h4><i class="fas fa-book"></i> Инструкции по уходу</h4>
+            <div class="admin-input-label">Пункт 1: Заголовок</div>
+            <input type="text" id="editCare1Title" class="admin-input">
+            <div class="admin-input-label">Пункт 1: Текст</div>
+            <textarea id="editCare1Text" class="admin-input" rows="3"></textarea>
+            
+            <div class="admin-input-label">Пункт 2: Заголовок</div>
+            <input type="text" id="editCare2Title" class="admin-input">
+            <div class="admin-input-label">Пункт 2: Текст</div>
+            <textarea id="editCare2Text" class="admin-input" rows="3"></textarea>
+            
+            <div class="admin-input-label">Пункт 3: Заголовок</div>
+            <input type="text" id="editCare3Title" class="admin-input">
+            <div class="admin-input-label">Пункт 3: Текст</div>
+            <textarea id="editCare3Text" class="admin-input" rows="3"></textarea>
+            
+            <div class="admin-input-label">Пункт 4: Заголовок</div>
+            <input type="text" id="editCare4Title" class="admin-input">
+            <div class="admin-input-label">Пункт 4: Текст</div>
+            <textarea id="editCare4Text" class="admin-input" rows="3"></textarea>
+        </div>
+        
+        <div class="admin-section">
+            <h4><i class="fas fa-users"></i> Мастера (JSON формат)</h4>
+            <div class="admin-hint">
+                Поля: id, name, spec, icon, photo (ссылка), chat (ссылка на диалог), calendar, works[]
+                <br>works: icon, name, badge (true/false), photo (ссылка)
+            </div>
+            <textarea id="editMasters" class="admin-input" rows="10"></textarea>
+        </div>
+        
         <div class="admin-section">
             <button class="admin-btn-sm" id="saveAdminBtn"><i class="fas fa-save"></i> Сохранить</button>
-            <button class="admin-btn-sm admin-btn-outline" id="exportAdminBtn">Экспорт</button>
-            <button class="admin-btn-sm admin-btn-outline" id="importAdminBtn">Импорт</button>
+            <button class="admin-btn-sm admin-btn-outline" id="exportAdminBtn"><i class="fas fa-download"></i> Экспорт</button>
+            <button class="admin-btn-sm admin-btn-outline" id="importAdminBtn"><i class="fas fa-upload"></i> Импорт</button>
         </div>
         <p style="font-size:12px; color:var(--text-tertiary); margin-top:10px;">Ваш ID: <span id="userIdDisplay"></span></p>
     </div>
 
     <!-- Соцсети -->
     <div class="actions">
-        <a href="#" class="action-btn vk" id="vkBtn"><i class="fab fa-vk"></i></a>
-        <a href="#" class="action-btn inst" id="instBtn"><i class="fab fa-instagram"></i></a>
-        <a href="#" class="action-btn tg" id="tgBtn"><i class="fab fa-telegram-plane"></i></a>
+        <a href="#" class="action-btn vk" id="vkBtn" target="_blank"><i class="fab fa-vk"></i></a>
+        <a href="#" class="action-btn inst" id="instBtn" target="_blank"><i class="fab fa-instagram"></i></a>
+        <a href="#" class="action-btn tg" id="tgBtn" target="_blank"><i class="fab fa-telegram-plane"></i></a>
     </div>
 
     <div class="section-head"><h2><i class="fas fa-hand-holding-heart"></i> Уход</h2></div>
@@ -652,9 +753,10 @@
             tgLink: '#',
             supportLink: '#',
             care: [
-                { title: 'Первичное заживление', text: '0–4 дня: не снимать плёнку, не мочить. Лимфу промокать снаружи стерильной салфеткой. Спать на чистом белье, избегать трения одежды. Не чесать, не тереть. Плёнку снять через 3-4 дня под тёплой водой с мягким мылом. Промокнуть чистым полотенцем.' },
-                { title: 'Увлажнение и крем', text: '4–14 день: мытьё 2 раза в день pH-нейтральным мылом. После мытья наносить тонкий слой заживляющего крема (Бепантен, Пантенол) 2-3 раза в день. Корочки не сдирать — отпадут сами. Исключить сауну, баню, бассейн, спортзал. Не заклеивать пластырем, кожа должна дышать.' },
-                { title: 'Долговременная защита', text: 'После полного заживления (≈1 месяц): всегда использовать SPF 50 на татуировку при нахождении на солнце. Увлажнять кожу лосьоном без отдушек ежедневно. Раз в 1-2 года делать коррекцию для сохранения яркости. Избегать солярия, пилингов и скрабов на области тату.' }
+                { title: 'Заживление пелёнкой', text: '<strong>Метод сухого заживления (пелёнка):</strong> После сеанса мастер накладывает впитывающую пелёнку. Менять пелёнку каждые 4-6 часов в течение первых 2-3 дней. Перед заменой мыть руки, аккуратно снимать старую пелёнку, промывать тату тёплой водой с мягким мылом, промакивать чистым бумажным полотенцем и накладывать новую пелёнку. Спать на чистом белье. Не мочить в душе дольше 5-7 минут. На 3-4 день переходить на заживляющий крем.' },
+                { title: 'Заживление плёнкой', text: '<strong>Метод влажного заживления (плёнка):</strong> Мастер накладывает дышащую заживляющую плёнку. Носить 3-5 дней не снимая. Под плёнкой образуется сукровица — это нормально. Если жидкость вытекает за края — плёнку пора менять. Не мочить, не тереть. Снимать плёнку под тёплой проточной водой, медленно оттягивая вниз. После снятия переходить на крем.' },
+                { title: 'Увлажнение и крем', text: '<strong>4–14 день:</strong> Мыть тату 2 раза в день pH-нейтральным мылом (Baby, Dove). После мытья промакивать чистым бумажным полотенцем, дать подсохнуть 5-10 минут. Наносить тонкий слой заживляющего крема (Бепантен Плюс, Пантенол, Doctor Pro) — крем должен полностью впитаться, не оставляя жирной плёнки. Корочки не сдирать, они отпадут сами. Исключить сауну, баню, бассейн, спортзал. Носить свободную х/б одежду.' },
+                { title: 'Долговременная защита', text: '<strong>После заживления (≈1 месяц):</strong> Татуировка полностью восстановилась, но кожа продолжает регенерировать до 3 месяцев. Всегда использовать SPF 50 на тату при выходе на солнце — ультрафиолет разрушает пигмент. Увлажнять кожу лосьоном без отдушек ежедневно. Раз в 1-2 года делать коррекцию для обновления яркости. Избегать солярия, химических пилингов и скрабов на области тату. Не чесать, не тереть мочалкой.' }
             ],
             masters: [
                 { id: 'anna', name: 'Анна', spec: 'Япония · Неотрад', icon: 'fa-user-astronaut', photo: '', chat: '#', calendar: 'anna',
@@ -674,14 +776,11 @@
         let selectedDate = null, selectedTime = null;
         let userThemePreference = localStorage.getItem('ink_theme_pref') || 'auto';
 
-        // Обновление meta-тега и статус-бара
         function updateStatusBar(theme) {
             const themeMeta = document.querySelector('meta[name="theme-color"]');
             if (themeMeta) {
                 themeMeta.setAttribute('content', theme === 'dark' ? '#19191a' : '#f2f2f7');
             }
-            
-            // VK Bridge управление статус-баром
             if (bridge && bridge.supports('VKWebAppSetViewSettings')) {
                 bridge.send('VKWebAppSetViewSettings', {
                     status_bar_style: theme === 'dark' ? 'light' : 'dark'
@@ -696,26 +795,44 @@
 
         function applyData() {
             document.getElementById('footerStudioName').textContent = appData.studioName;
-            document.getElementById('vkBtn').href = appData.vkLink;
-            document.getElementById('instBtn').href = appData.instLink;
-            document.getElementById('tgBtn').href = appData.tgLink;
+            document.getElementById('vkBtn').href = appData.vkLink || '#';
+            document.getElementById('instBtn').href = appData.instLink || '#';
+            document.getElementById('tgBtn').href = appData.tgLink || '#';
             renderCare(); renderMasters(); renderGallery(selectedMasterId);
-            document.getElementById('editStudioName').value = appData.studioName;
-            document.getElementById('editVkLink').value = appData.vkLink;
-            document.getElementById('editInstLink').value = appData.instLink;
-            document.getElementById('editTgLink').value = appData.tgLink;
-            document.getElementById('editCare1Title').value = appData.care[0]?.title || '';
-            document.getElementById('editCare1Text').value = appData.care[0]?.text || '';
-            document.getElementById('editCare2Title').value = appData.care[1]?.title || '';
-            document.getElementById('editCare2Text').value = appData.care[1]?.text || '';
-            document.getElementById('editCare3Title').value = appData.care[2]?.title || '';
-            document.getElementById('editCare3Text').value = appData.care[2]?.text || '';
+            
+            // Заполняем админ-поля
+            document.getElementById('editStudioName').value = appData.studioName || '';
+            document.getElementById('editVkLink').value = appData.vkLink || '';
+            document.getElementById('editInstLink').value = appData.instLink || '';
+            document.getElementById('editTgLink').value = appData.tgLink || '';
+            document.getElementById('editSupportLink').value = appData.supportLink || '';
+            
+            if (appData.care && appData.care.length >= 4) {
+                document.getElementById('editCare1Title').value = appData.care[0]?.title || '';
+                document.getElementById('editCare1Text').value = appData.care[0]?.text || '';
+                document.getElementById('editCare2Title').value = appData.care[1]?.title || '';
+                document.getElementById('editCare2Text').value = appData.care[1]?.text || '';
+                document.getElementById('editCare3Title').value = appData.care[2]?.title || '';
+                document.getElementById('editCare3Text').value = appData.care[2]?.text || '';
+                document.getElementById('editCare4Title').value = appData.care[3]?.title || '';
+                document.getElementById('editCare4Text').value = appData.care[3]?.text || '';
+            }
+            
             document.getElementById('editMasters').value = JSON.stringify(appData.masters, null, 2);
         }
 
         function renderCare() {
-            document.getElementById('careContainer').innerHTML = appData.care.map((c, i) => `
-                <div class="care-item"><div class="care-header" onclick="toggleCare(this)"><i class="fas ${i===0?'fa-band-aid':i===1?'fa-pump-medical':'fa-sun'}"></i><span class="title">${c.title}</span><i class="fas fa-chevron-right chevron"></i></div><div class="care-content">${c.text}</div></div>
+            const container = document.getElementById('careContainer');
+            const icons = ['fa-pump-medical', 'fa-band-aid', 'fa-droplet', 'fa-sun'];
+            container.innerHTML = appData.care.map((c, i) => `
+                <div class="care-item">
+                    <div class="care-header" onclick="toggleCare(this)">
+                        <i class="fas ${icons[i] || 'fa-heart'}"></i>
+                        <span class="title">${c.title}</span>
+                        <i class="fas fa-chevron-right chevron"></i>
+                    </div>
+                    <div class="care-content">${c.text}</div>
+                </div>
             `).join('');
         }
 
@@ -747,12 +864,16 @@
             appData.vkLink = document.getElementById('editVkLink').value;
             appData.instLink = document.getElementById('editInstLink').value;
             appData.tgLink = document.getElementById('editTgLink').value;
+            appData.supportLink = document.getElementById('editSupportLink').value;
+            
             appData.care = [
                 { title: document.getElementById('editCare1Title').value, text: document.getElementById('editCare1Text').value },
                 { title: document.getElementById('editCare2Title').value, text: document.getElementById('editCare2Text').value },
-                { title: document.getElementById('editCare3Title').value, text: document.getElementById('editCare3Text').value }
+                { title: document.getElementById('editCare3Title').value, text: document.getElementById('editCare3Text').value },
+                { title: document.getElementById('editCare4Title').value, text: document.getElementById('editCare4Text').value }
             ];
-            try { appData.masters = JSON.parse(document.getElementById('editMasters').value); } catch(e) { showToast('Ошибка JSON'); return; }
+            
+            try { appData.masters = JSON.parse(document.getElementById('editMasters').value); } catch(e) { showToast('Ошибка JSON в мастерах'); return; }
             try { await bridge.send('VKWebAppStorageSet', { key: 'appData', value: JSON.stringify(appData) }); showToast('Сохранено!'); applyData(); } catch(e) { showToast('Ошибка сохранения'); }
         }
 
@@ -790,23 +911,14 @@
         }
 
         function updateTheme() {
-            let activeTheme;
-            if (userThemePreference === 'auto') {
-                activeTheme = getTimeBasedTheme();
-            } else {
-                activeTheme = userThemePreference;
-            }
+            let activeTheme = (userThemePreference === 'auto') ? getTimeBasedTheme() : userThemePreference;
             applyTheme(activeTheme);
         }
 
         function cycleTheme() {
-            if (userThemePreference === 'auto') {
-                userThemePreference = 'light';
-            } else if (userThemePreference === 'light') {
-                userThemePreference = 'dark';
-            } else {
-                userThemePreference = 'auto';
-            }
+            if (userThemePreference === 'auto') userThemePreference = 'light';
+            else if (userThemePreference === 'light') userThemePreference = 'dark';
+            else userThemePreference = 'auto';
             localStorage.setItem('ink_theme_pref', userThemePreference);
             updateTheme();
         }
@@ -834,12 +946,15 @@
             document.getElementById('saveAdminBtn').addEventListener('click', saveAllSettings);
             document.getElementById('exportAdminBtn').addEventListener('click', exportData);
             document.getElementById('importAdminBtn').addEventListener('click', importData);
-            
             document.getElementById('themeToggleBtn').addEventListener('click', cycleTheme);
             
-            document.getElementById('supportBtn').addEventListener('click',()=>{ if(appData.supportLink&&appData.supportLink!=='#') bridge.send('VKWebAppOpenLink',{link:appData.supportLink}); else showToast('Ссылка не указана'); });
-            document.getElementById('bookBtn').addEventListener('click',()=>{ currentMode='book'; document.getElementById('modalTitle').textContent='Выберите мастера'; renderMastersList(); document.getElementById('masterSelectModal').classList.add('active'); });
-            document.getElementById('chatBtn').addEventListener('click',()=>{ currentMode='chat'; document.getElementById('modalTitle').textContent='Выберите мастера'; renderMastersList(); document.getElementById('masterSelectModal').classList.add('active'); });
+            document.getElementById('supportBtn').addEventListener('click',()=>{ 
+                if(appData.supportLink && appData.supportLink !== '#') bridge.send('VKWebAppOpenLink',{link:appData.supportLink}); 
+                else showToast('Ссылка на поддержку не указана'); 
+            });
+            
+            document.getElementById('bookBtn').addEventListener('click',()=>{ currentMode='book'; document.getElementById('modalTitle').textContent='Выберите мастера для записи'; renderMastersList(); document.getElementById('masterSelectModal').classList.add('active'); });
+            document.getElementById('chatBtn').addEventListener('click',()=>{ currentMode='chat'; document.getElementById('modalTitle').textContent='Выберите мастера для чата'; renderMastersList(); document.getElementById('masterSelectModal').classList.add('active'); });
         })();
 
         function renderMastersList() {
@@ -854,7 +969,10 @@
             l.querySelectorAll('.master-select-item').forEach(el => el.addEventListener('click', function(){
                 const master = appData.masters.find(m => m.id === this.dataset.masterId); selectedMasterForAction = master;
                 document.getElementById('masterSelectModal').classList.remove('active');
-                if(currentMode==='book') { openCalendar(master); } else { if(master.chat&&master.chat!=='#') bridge.send('VKWebAppOpenLink',{link:master.chat}); else showToast(`Чат с ${master.name} не настроен`); }
+                if(currentMode==='book') { openCalendar(master); } else { 
+                    if(master.chat && master.chat !== '#') bridge.send('VKWebAppOpenLink',{link:master.chat}); 
+                    else showToast(`Чат с ${master.name} не настроен`); 
+                }
             }));
         }
 
