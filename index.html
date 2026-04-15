@@ -13,6 +13,7 @@
             box-sizing: border-box;
         }
 
+        /* Светлая тема */
         :root,
         [data-theme="light"] {
             --bg-primary: #f2f2f7;
@@ -30,7 +31,7 @@
             --border-light: rgba(60, 60, 67, 0.1);
             --border-medium: rgba(60, 60, 67, 0.15);
             --card-bg: #ffffff;
-            --header-blur: rgba(255,255,255,0.85);
+            --header-bg: #ffffff;
             --vk-blue: #0077ff;
             --inst-pink: #e4405f;
             --tg-blue: #26a5e4;
@@ -40,28 +41,29 @@
             --btn-active-text: #ffffff;
         }
 
+        /* Тёмная тема в стиле VK (без синего оттенка) */
         [data-theme="dark"] {
-            --bg-primary: #1a1d23;
-            --bg-secondary: #23272f;
-            --bg-tertiary: #2c313a;
-            --text-primary: #e8eaed;
-            --text-secondary: #9aa0a9;
-            --text-tertiary: #757b84;
+            --bg-primary: #19191a;
+            --bg-secondary: #222222;
+            --bg-tertiary: #2d2d2e;
+            --text-primary: #e1e1e1;
+            --text-secondary: #9a9a9a;
+            --text-tertiary: #6d6d6e;
             --accent: #a99cf0;
             --accent-soft: #3a3555;
             --accent-secondary: #e0b044;
             --accent-secondary-soft: #3d341a;
             --badge-new: #e54b4b;
-            --separator: #3a3f48;
-            --border-light: rgba(255, 255, 255, 0.12);
-            --border-medium: rgba(255, 255, 255, 0.18);
-            --card-bg: #23272f;
-            --header-blur: rgba(26,29,35,0.9);
+            --separator: #333334;
+            --border-light: rgba(255, 255, 255, 0.08);
+            --border-medium: rgba(255, 255, 255, 0.12);
+            --card-bg: #222222;
+            --header-bg: #222222;
             --vk-blue: #5a9cff;
             --inst-pink: #ff6b81;
             --tg-blue: #4db6e8;
-            --btn-default-bg: #2c313a;
-            --btn-default-text: #e8eaed;
+            --btn-default-bg: #2d2d2e;
+            --btn-default-text: #e1e1e1;
             --btn-active-bg: #8f7fd6;
             --btn-active-text: #ffffff;
         }
@@ -75,8 +77,7 @@
             font-size: 15px;
             padding: 0 0 20px;
             transition: background 0.2s ease;
-            padding-top: constant(safe-area-inset-top);
-            padding-top: env(safe-area-inset-top);
+            margin: 0;
         }
 
         .page {
@@ -85,17 +86,15 @@
             background: var(--bg-primary);
         }
 
-        /* Header с безопасными отступами */
+        /* Шапка — прижата к верху, скруглённые нижние углы */
         .header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 14px 16px;
-            padding-top: max(14px, env(safe-area-inset-top));
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            background: var(--header-blur);
+            padding: 12px 16px;
+            background: var(--header-bg);
             border-bottom: 0.5px solid var(--separator);
+            border-radius: 0 0 20px 20px;
             position: sticky;
             top: 0;
             z-index: 10;
@@ -128,7 +127,7 @@
             color: var(--accent) !important;
         }
 
-        /* Соцсети — нормальные кнопки с рамками */
+        /* Соцсети */
         .actions {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -160,7 +159,7 @@
         }
         .action-btn:active i { color: var(--btn-active-text); }
 
-        /* Заголовки секций — без стрелок */
+        /* Заголовки секций */
         .section-head {
             padding: 18px 16px 8px;
         }
@@ -241,7 +240,7 @@
         }
         .master-card.selected .selected-indicator { opacity: 1; }
 
-        /* Кнопки записи/чата между мастерами и работами */
+        /* Кнопки записи/чата */
         .middle-actions {
             padding: 16px 16px 8px;
             display: flex;
@@ -307,7 +306,7 @@
             line-height: 1;
         }
 
-        /* Поддержка внизу */
+        /* Поддержка */
         .support-bottom {
             padding: 16px 16px 8px;
             margin-top: 8px;
@@ -542,7 +541,6 @@
         <div class="logo"><i class="fas fa-sparkles"></i> <span id="studioName">Ink</span></div>
         <div class="header-actions">
             <button id="adminToggleBtn" class="admin-btn" style="display:none;"><i class="fas fa-user-cog"></i></button>
-            <button id="themeToggleBtn"><i class="fas fa-circle-half-stroke" id="themeIcon"></i></button>
         </div>
     </div>
 
@@ -713,17 +711,44 @@
             try { const u = await bridge.send('VKWebAppGetUserInfo'); currentUserId = u.id; document.getElementById('userIdDisplay').textContent = u.id; if(ADMIN_IDS.includes(u.id)||ADMIN_IDS.length===0) document.getElementById('adminToggleBtn').style.display='block'; } catch(e) {}
         }
 
-        const html = document.documentElement, themeBtn = document.getElementById('themeToggleBtn'), themeIcon = document.getElementById('themeIcon');
-        async function loadTheme() { try { const k = await bridge.send('VKWebAppStorageGet',{keys:['userTheme']}); applyTheme(k.keys[0]?.value||'auto'); } catch(e) { applyTheme('auto'); } }
-        function applyTheme(m) { if(m==='light'){ html.setAttribute('data-theme','light'); themeIcon.className='fas fa-sun'; } else if(m==='dark'){ html.setAttribute('data-theme','dark'); themeIcon.className='fas fa-moon'; } else { html.removeAttribute('data-theme'); themeIcon.className=window.matchMedia('(prefers-color-scheme:dark)').matches?'fas fa-moon':'fas fa-sun'; } }
-        async function cycleTheme() { const c = html.getAttribute('data-theme')||'auto'; let n; if(c==='auto') n='light'; else if(c==='light') n='dark'; else n='auto'; applyTheme(n); try { await bridge.send('VKWebAppStorageSet',{key:'userTheme',value:n}); } catch(e) {} }
-        themeBtn.addEventListener('click', cycleTheme);
+        // Автоматическая тема из VK (без кнопки переключения)
+        const html = document.documentElement;
+        
+        async function loadTheme() {
+            try {
+                // Получаем тему из VK
+                const theme = await bridge.send('VKWebAppGetTheme');
+                applyTheme(theme);
+                // Подписываемся на изменения темы
+                bridge.subscribe((e) => {
+                    if (e.detail?.type === 'VKWebAppUpdateTheme') {
+                        applyTheme(e.detail.data);
+                    }
+                });
+            } catch(e) {
+                // Fallback на системную тему
+                const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                applyTheme({ scheme: isDark ? 'dark' : 'light' });
+            }
+        }
+        
+        function applyTheme(theme) {
+            const scheme = theme.scheme || theme;
+            if (scheme === 'dark' || scheme === 'space_gray') {
+                html.setAttribute('data-theme', 'dark');
+            } else {
+                html.setAttribute('data-theme', 'light');
+            }
+        }
 
         window.toggleCare = function(h) { const i = h.closest('.care-item'); document.querySelectorAll('.care-item').forEach(c => { if(c!==i) c.classList.remove('active'); }); i.classList.toggle('active'); };
         function showToast(m) { const t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2000); }
 
         (async function init() {
-            await bridge.send('VKWebAppInit'); await checkAdmin(); await loadData(); await loadTheme();
+            await bridge.send('VKWebAppInit');
+            await checkAdmin();
+            await loadData();
+            await loadTheme();
             document.getElementById('adminToggleBtn').addEventListener('click',()=>{ document.getElementById('adminPanel').classList.toggle('active'); });
             document.getElementById('supportBtn').addEventListener('click',()=>{ if(appData.supportLink&&appData.supportLink!=='#') bridge.send('VKWebAppOpenLink',{link:appData.supportLink}); else showToast('Ссылка не указана'); });
             document.getElementById('bookBtn').addEventListener('click',()=>{ currentMode='book'; document.getElementById('modalTitle').textContent='Выберите мастера'; renderMastersList(); document.getElementById('masterSelectModal').classList.add('active'); });
