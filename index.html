@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <title>Ink · тату студия</title>
+    
+    <!-- Meta-теги для статус-бара -->
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f2f2f7">
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#19191a">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    
     <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -38,6 +44,7 @@
             --btn-default-text: #1c1c1e;
             --btn-active-bg: #b8aaf0;
             --btn-active-text: #ffffff;
+            --status-bar-overlay: linear-gradient(to bottom, rgba(0,0,0,0.08) 0%, transparent 100%);
         }
 
         [data-theme="dark"] {
@@ -64,6 +71,7 @@
             --btn-default-text: #e1e1e1;
             --btn-active-bg: #8f7fd6;
             --btn-active-text: #ffffff;
+            --status-bar-overlay: none;
         }
 
         body {
@@ -84,15 +92,16 @@
             background: var(--bg-primary);
         }
 
-        /* Увеличенная невидимая шапка + кнопка темы */
+        /* Шапка с кнопкой темы и затемнением для статус-бара */
         .safe-header {
             display: flex;
             align-items: center;
             justify-content: flex-end;
-            padding: 28px 16px 8px;
-            padding-top: calc(28px + env(safe-area-inset-top));
-            background: transparent;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, transparent 100%);
+            padding: 20px 16px 8px;
+            padding-top: calc(20px + env(safe-area-inset-top));
+            background: var(--status-bar-overlay);
+            position: relative;
+            z-index: 5;
         }
 
         .theme-toggle-btn {
@@ -665,6 +674,21 @@
         let selectedDate = null, selectedTime = null;
         let userThemePreference = localStorage.getItem('ink_theme_pref') || 'auto';
 
+        // Обновление meta-тега и статус-бара
+        function updateStatusBar(theme) {
+            const themeMeta = document.querySelector('meta[name="theme-color"]');
+            if (themeMeta) {
+                themeMeta.setAttribute('content', theme === 'dark' ? '#19191a' : '#f2f2f7');
+            }
+            
+            // VK Bridge управление статус-баром
+            if (bridge && bridge.supports('VKWebAppSetViewSettings')) {
+                bridge.send('VKWebAppSetViewSettings', {
+                    status_bar_style: theme === 'dark' ? 'light' : 'dark'
+                }).catch(() => {});
+            }
+        }
+
         async function loadData() {
             try { const keys = await bridge.send('VKWebAppStorageGet', { keys: ['appData'] }); if (keys.keys[0]?.value) appData = JSON.parse(keys.keys[0].value); } catch(e) {}
             applyData();
@@ -762,6 +786,7 @@
                 html.setAttribute('data-theme', 'light');
                 themeIcon.className = 'fas fa-sun';
             }
+            updateStatusBar(theme);
         }
 
         function updateTheme() {
@@ -786,7 +811,6 @@
             updateTheme();
         }
 
-        // Запуск обновления темы каждый час
         setInterval(() => { if (userThemePreference === 'auto') updateTheme(); }, 3600000);
 
         window.toggleCare = function(h) { 
@@ -802,7 +826,6 @@
             await loadData();
             updateTheme();
             
-            // Обработчики админки через ID
             document.getElementById('footerAdminToggleBtn').addEventListener('click', (e) => {
                 e.stopPropagation();
                 document.getElementById('adminPanel').classList.toggle('active');
