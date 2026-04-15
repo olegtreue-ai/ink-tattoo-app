@@ -647,7 +647,7 @@
         };
 
         let currentUserId = null;
-        const 630691351 = []; // Заполните свои ID ВКонтакте (числовые)
+        const ADMIN_IDS = [630691351]; // Заполните свои ID ВКонтакте (числовые)
 
         let selectedMasterId = 'anna';
         let currentMode = 'book';
@@ -805,7 +805,7 @@
                 document.getElementById('userIdDisplay').textContent = user.id;
                 
                 // Проверяем, является ли пользователь админом
-                if (630691351.includes(user.id) || 630691351.length === 0) {
+                if (ADMIN_IDS.includes(user.id) || ADMIN_IDS.length === 0) {
                     document.getElementById('adminToggleBtn').style.display = 'block';
                 }
             } catch(e) {}
