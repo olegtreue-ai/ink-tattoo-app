@@ -30,7 +30,7 @@
             --border-light: rgba(60, 60, 67, 0.1);
             --border-medium: rgba(60, 60, 67, 0.15);
             --card-bg: #ffffff;
-            --header-bg: #ffffff;
+            --header-bg: rgba(255,255,255,0.8);
             --vk-blue: #0077ff;
             --inst-pink: #e4405f;
             --tg-blue: #26a5e4;
@@ -56,7 +56,7 @@
             --border-light: rgba(255, 255, 255, 0.08);
             --border-medium: rgba(255, 255, 255, 0.12);
             --card-bg: #222222;
-            --header-bg: #222222;
+            --header-bg: rgba(34,34,34,0.8);
             --vk-blue: #5a9cff;
             --inst-pink: #ff6b81;
             --tg-blue: #4db6e8;
@@ -84,17 +84,25 @@
             background: var(--bg-primary);
         }
 
-        /* Шапка убрана, но соцсети остаются на месте */
+        /* Невидимая шапка для отступов */
+        .safe-header {
+            height: 0;
+            padding-top: env(safe-area-inset-top);
+            background: transparent;
+        }
+
+        /* Блюр для соцсетей */
         .actions {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 8px;
             padding: 16px 16px;
             border-bottom: 0.5px solid var(--separator);
-            margin-top: 0;
         }
         .action-btn {
             background: var(--btn-default-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             border-radius: 14px;
             padding: 14px 6px;
             text-align: center;
@@ -153,7 +161,7 @@
             font-size: 14px;
             transition: max-height 0.25s ease, padding 0.25s ease;
         }
-        .care-item.active .care-content { max-height: 200px; padding: 0 0 18px 34px; }
+        .care-item.active .care-content { max-height: 500px; padding: 0 0 18px 34px; }
 
         .masters {
             display: grid;
@@ -182,6 +190,12 @@
             border: 2px solid transparent;
             box-shadow: 0 2px 6px rgba(0,0,0,0.04);
             transition: border 0.15s;
+            overflow: hidden;
+        }
+        .master-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         .master-card.selected .master-avatar { border-color: var(--accent); }
         .master-card h4 { font-size: 15px; font-weight: 600; }
@@ -203,6 +217,8 @@
         .primary-btn, .secondary-btn {
             flex: 1;
             background: var(--accent);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             color: white;
             border: none;
             border-radius: 16px;
@@ -239,6 +255,12 @@
             position: relative;
             border: 0.5px solid var(--border-light);
             transition: transform 0.12s;
+            overflow: hidden;
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         .gallery-item:active { transform: scale(0.97); }
         .gallery-item span { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
@@ -253,6 +275,7 @@
             border-radius: 20px;
             font-weight: 600;
             line-height: 1;
+            z-index: 2;
         }
 
         .support-bottom {
@@ -266,6 +289,8 @@
             justify-content: center;
             gap: 8px;
             background: var(--btn-default-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             border: 1px solid var(--border-light);
             border-radius: 16px;
             padding: 14px;
@@ -286,7 +311,7 @@
             align-items: center;
         }
 
-        /* Админ-панель */
+        /* Админ-панель сверху */
         .admin-panel {
             display: none;
             padding: 16px;
@@ -397,6 +422,12 @@
             justify-content: center;
             font-size: 24px;
             color: var(--accent-secondary);
+            overflow: hidden;
+        }
+        .master-select-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         .master-select-info h4 { font-weight: 600; font-size: 15px; margin-bottom: 2px; }
         .master-select-info p { font-size: 13px; color: var(--text-secondary); }
@@ -496,7 +527,25 @@
 </head>
 <body>
 <div class="page">
-    <!-- Шапка полностью убрана, соцсети начинаются сразу сверху -->
+    <!-- Невидимая шапка для отступов -->
+    <div class="safe-header"></div>
+
+    <!-- Админ-панель сверху -->
+    <div class="admin-panel" id="adminPanel">
+        <div class="admin-title"><i class="fas fa-lock"></i> Админ-панель</div>
+        <div class="admin-section"><h4>Название студии</h4><input type="text" id="editStudioName" class="admin-input"></div>
+        <div class="admin-section"><h4>Ссылки</h4><input type="text" id="editVkLink" class="admin-input" placeholder="VK"><input type="text" id="editInstLink" class="admin-input" placeholder="Inst"><input type="text" id="editTgLink" class="admin-input" placeholder="TG"></div>
+        <div class="admin-section"><h4>Инструкции</h4><input type="text" id="editCare1Title" class="admin-input"><textarea id="editCare1Text" class="admin-input" rows="3"></textarea><input type="text" id="editCare2Title" class="admin-input"><textarea id="editCare2Text" class="admin-input" rows="3"></textarea><input type="text" id="editCare3Title" class="admin-input"><textarea id="editCare3Text" class="admin-input" rows="3"></textarea></div>
+        <div class="admin-section"><h4>Мастера (JSON)</h4><textarea id="editMasters" class="admin-input" rows="8"></textarea></div>
+        <div class="admin-section">
+            <button class="admin-btn-sm" onclick="saveAllSettings()"><i class="fas fa-save"></i> Сохранить</button>
+            <button class="admin-btn-sm admin-btn-outline" onclick="exportData()">Экспорт</button>
+            <button class="admin-btn-sm admin-btn-outline" onclick="importData()">Импорт</button>
+        </div>
+        <p style="font-size:12px; color:var(--text-tertiary); margin-top:10px;">Ваш ID: <span id="userIdDisplay"></span></p>
+    </div>
+
+    <!-- Соцсети с блюром -->
     <div class="actions">
         <a href="#" class="action-btn vk" id="vkBtn"><i class="fab fa-vk"></i></a>
         <a href="#" class="action-btn inst" id="instBtn"><i class="fab fa-instagram"></i></a>
@@ -527,21 +576,6 @@
             <button id="footerAdminToggleBtn" class="footer-admin-btn"><i class="fas fa-user-cog"></i></button>
             <span>VK Mini App</span>
         </div>
-    </div>
-
-    <!-- Админ-панель -->
-    <div class="admin-panel" id="adminPanel">
-        <div class="admin-title"><i class="fas fa-lock"></i> Админ-панель</div>
-        <div class="admin-section"><h4>Название студии</h4><input type="text" id="editStudioName" class="admin-input"></div>
-        <div class="admin-section"><h4>Ссылки</h4><input type="text" id="editVkLink" class="admin-input" placeholder="VK"><input type="text" id="editInstLink" class="admin-input" placeholder="Inst"><input type="text" id="editTgLink" class="admin-input" placeholder="TG"></div>
-        <div class="admin-section"><h4>Инструкции</h4><input type="text" id="editCare1Title" class="admin-input"><textarea id="editCare1Text" class="admin-input" rows="2"></textarea><input type="text" id="editCare2Title" class="admin-input"><textarea id="editCare2Text" class="admin-input" rows="2"></textarea><input type="text" id="editCare3Title" class="admin-input"><textarea id="editCare3Text" class="admin-input" rows="2"></textarea></div>
-        <div class="admin-section"><h4>Мастера (JSON)</h4><textarea id="editMasters" class="admin-input" rows="6"></textarea></div>
-        <div class="admin-section">
-            <button class="admin-btn-sm" onclick="saveAllSettings()"><i class="fas fa-save"></i> Сохранить</button>
-            <button class="admin-btn-sm admin-btn-outline" onclick="exportData()">Экспорт</button>
-            <button class="admin-btn-sm admin-btn-outline" onclick="importData()">Импорт</button>
-        </div>
-        <p style="font-size:12px; color:var(--text-tertiary); margin-top:10px;">Ваш ID: <span id="userIdDisplay"></span></p>
     </div>
 </div>
 
@@ -579,17 +613,17 @@
             tgLink: '#',
             supportLink: '#',
             care: [
-                { title: 'Первичное заживление', text: '0–4 дня: не снимать плёнку, не мочить, лимфу промокать снаружи.' },
-                { title: 'Увлажнение и крем', text: '4–14 день: тонкий слой крема 2-3 раза, мыть pH-нейтральным мылом.' },
-                { title: 'Долговременная защита', text: 'После заживления: SPF 50, увлажнение без отдушек, коррекция раз в год.' }
+                { title: 'Первичное заживление', text: '0–4 дня: не снимать плёнку, не мочить. Лимфу промокать снаружи стерильной салфеткой. Спать на чистом белье, избегать трения одежды. Не чесать, не тереть. Плёнку снять через 3-4 дня под тёплой водой с мягким мылом. Промокнуть чистым полотенцем.' },
+                { title: 'Увлажнение и крем', text: '4–14 день: мытьё 2 раза в день pH-нейтральным мылом. После мытья наносить тонкий слой заживляющего крема (Бепантен, Пантенол) 2-3 раза в день. Корочки не сдирать — отпадут сами. Исключить сауну, баню, бассейн, спортзал. Не заклеивать пластырем, кожа должна дышать.' },
+                { title: 'Долговременная защита', text: 'После полного заживления (≈1 месяц): всегда использовать SPF 50 на татуировку при нахождении на солнце. Увлажнять кожу лосьоном без отдушек ежедневно. Раз в 1-2 года делать коррекцию для сохранения яркости. Избегать солярия, пилингов и скрабов на области тату.' }
             ],
             masters: [
-                { id: 'anna', name: 'Анна', spec: 'Япония · Неотрад', icon: 'fa-user-astronaut', chat: '#', calendar: 'anna',
-                  works: [{ icon: 'fa-dragon', name: 'Дракон', badge: true },{ icon: 'fa-fish', name: 'Кои', badge: false },{ icon: 'fa-skull', name: 'Череп', badge: true },{ icon: 'fa-crow', name: 'Ворон', badge: false },{ icon: 'fa-leaf', name: 'Ботаника', badge: true },{ icon: 'fa-moon', name: 'Луна', badge: false }] },
-                { id: 'max', name: 'Макс', spec: 'Блэкворк · Графика', icon: 'fa-user-ninja', chat: '#', calendar: 'max',
-                  works: [{ icon: 'fa-crow', name: 'Ворон', badge: true },{ icon: 'fa-skull', name: 'Череп', badge: false },{ icon: 'fa-moon', name: 'Луна', badge: true },{ icon: 'fa-dragon', name: 'Дракон', badge: false },{ icon: 'fa-fish', name: 'Кои', badge: true },{ icon: 'fa-leaf', name: 'Ботаника', badge: false }] },
-                { id: 'eva', name: 'Ева', spec: 'Минимал · Ботаника', icon: 'fa-user-crown', chat: '#', calendar: 'eva',
-                  works: [{ icon: 'fa-leaf', name: 'Ботаника', badge: true },{ icon: 'fa-moon', name: 'Луна', badge: false },{ icon: 'fa-fish', name: 'Кои', badge: true },{ icon: 'fa-crow', name: 'Ворон', badge: false },{ icon: 'fa-dragon', name: 'Дракон', badge: true },{ icon: 'fa-skull', name: 'Череп', badge: false }] }
+                { id: 'anna', name: 'Анна', spec: 'Япония · Неотрад', icon: 'fa-user-astronaut', photo: '', chat: '#', calendar: 'anna',
+                  works: [{ icon: 'fa-dragon', name: 'Дракон', badge: true, photo: '' },{ icon: 'fa-fish', name: 'Кои', badge: false, photo: '' },{ icon: 'fa-skull', name: 'Череп', badge: true, photo: '' },{ icon: 'fa-crow', name: 'Ворон', badge: false, photo: '' },{ icon: 'fa-leaf', name: 'Ботаника', badge: true, photo: '' },{ icon: 'fa-moon', name: 'Луна', badge: false, photo: '' }] },
+                { id: 'max', name: 'Макс', spec: 'Блэкворк · Графика', icon: 'fa-user-ninja', photo: '', chat: '#', calendar: 'max',
+                  works: [{ icon: 'fa-crow', name: 'Ворон', badge: true, photo: '' },{ icon: 'fa-skull', name: 'Череп', badge: false, photo: '' },{ icon: 'fa-moon', name: 'Луна', badge: true, photo: '' },{ icon: 'fa-dragon', name: 'Дракон', badge: false, photo: '' },{ icon: 'fa-fish', name: 'Кои', badge: true, photo: '' },{ icon: 'fa-leaf', name: 'Ботаника', badge: false, photo: '' }] },
+                { id: 'eva', name: 'Ева', spec: 'Минимал · Ботаника', icon: 'fa-user-crown', photo: '', chat: '#', calendar: 'eva',
+                  works: [{ icon: 'fa-leaf', name: 'Ботаника', badge: true, photo: '' },{ icon: 'fa-moon', name: 'Луна', badge: false, photo: '' },{ icon: 'fa-fish', name: 'Кои', badge: true, photo: '' },{ icon: 'fa-crow', name: 'Ворон', badge: false, photo: '' },{ icon: 'fa-dragon', name: 'Дракон', badge: true, photo: '' },{ icon: 'fa-skull', name: 'Череп', badge: false, photo: '' }] }
             ]
         };
 
@@ -632,13 +666,25 @@
 
         function renderMasters() {
             const c = document.getElementById('mastersContainer');
-            c.innerHTML = appData.masters.map(m => `<div class="master-card ${m.id===selectedMasterId?'selected':''}" data-master-id="${m.id}"><div class="master-avatar"><i class="fas ${m.icon}"></i></div><h4>${m.name}</h4><p>${m.spec}</p><div class="selected-indicator"><i class="fas fa-check-circle"></i> выбран</div></div>`).join('');
+            c.innerHTML = appData.masters.map(m => {
+                const photo = m.photo || '';
+                return `<div class="master-card ${m.id===selectedMasterId?'selected':''}" data-master-id="${m.id}">
+                    <div class="master-avatar">${photo ? `<img src="${photo}" alt="${m.name}">` : `<i class="fas ${m.icon}"></i>`}</div>
+                    <h4>${m.name}</h4><p>${m.spec}</p><div class="selected-indicator"><i class="fas fa-check-circle"></i> выбран</div>
+                </div>`;
+            }).join('');
             c.querySelectorAll('.master-card').forEach(card => card.addEventListener('click', function(){ selectedMasterId=this.dataset.masterId; renderMasters(); renderGallery(selectedMasterId); }));
         }
 
         function renderGallery(mid) {
             const m = appData.masters.find(m => m.id === mid); if(!m) return;
-            document.getElementById('galleryContainer').innerHTML = m.works.map(w => `<a href="#" class="gallery-item"><i class="fas ${w.icon}"></i><span>${w.name}</span>${w.badge?'<span class="gallery-badge">new</span>':''}</a>`).join('');
+            document.getElementById('galleryContainer').innerHTML = m.works.map(w => {
+                const photo = w.photo || '';
+                return `<a href="#" class="gallery-item">
+                    ${photo ? `<img src="${photo}" alt="${w.name}">` : `<i class="fas ${w.icon}"></i>`}
+                    <span>${w.name}</span>${w.badge?'<span class="gallery-badge">new</span>':''}
+                </a>`;
+            }).join('');
         }
 
         async function saveAllSettings() {
@@ -720,7 +766,13 @@
 
         function renderMastersList() {
             const l = document.getElementById('mastersList');
-            l.innerHTML = appData.masters.map(m => `<div class="master-select-item" data-master-id="${m.id}"><div class="master-select-avatar"><i class="fas ${m.icon}"></i></div><div class="master-select-info"><h4>${m.name}</h4><p>${m.spec}</p></div></div>`).join('');
+            l.innerHTML = appData.masters.map(m => {
+                const photo = m.photo || '';
+                return `<div class="master-select-item" data-master-id="${m.id}">
+                    <div class="master-select-avatar">${photo ? `<img src="${photo}" alt="${m.name}">` : `<i class="fas ${m.icon}"></i>`}</div>
+                    <div class="master-select-info"><h4>${m.name}</h4><p>${m.spec}</p></div>
+                </div>`;
+            }).join('');
             l.querySelectorAll('.master-select-item').forEach(el => el.addEventListener('click', function(){
                 const master = appData.masters.find(m => m.id === this.dataset.masterId); selectedMasterForAction = master;
                 document.getElementById('masterSelectModal').classList.remove('active');
