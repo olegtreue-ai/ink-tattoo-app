@@ -226,54 +226,7 @@
             margin-bottom: 8px;
         }
 
-        /* Соцсети */
-        .actions {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            padding: 8px 16px 16px;
-            border-bottom: 0.5px solid var(--separator);
-        }
-        .action-btn {
-            background: var(--btn-default-bg);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 14px;
-            padding: 14px 6px;
-            text-align: center;
-            text-decoration: none;
-            color: var(--btn-default-text);
-            font-weight: 500;
-            font-size: 0;
-            transition: all 0.12s;
-            border: 1px solid var(--border-light);
-            cursor: pointer;
-        }
-        .action-btn i { font-size: 26px; }
-        .action-btn.vk i { color: var(--vk-blue); }
-        .action-btn.inst i { color: var(--inst-pink); }
-        .action-btn.tg i { color: var(--tg-blue); }
-        .action-btn:active { 
-            transform: scale(0.97); 
-            background: var(--btn-active-bg); 
-            color: var(--btn-active-text);
-        }
-        .action-btn:active i { color: var(--btn-active-text); }
-
-        .section-head {
-            padding: 18px 16px 8px;
-        }
-        .section-head h2 {
-            font-size: 17px;
-            font-weight: 600;
-            letter-spacing: -0.01em;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            color: var(--text-primary);
-        }
-        .section-head h2 i { color: var(--accent); font-size: 16px; }
-
+        /* Уход (перемещён наверх) */
         .care-list { padding: 0 16px; }
         .care-item { border-bottom: 0.5px solid var(--separator); }
         .care-header {
@@ -300,6 +253,20 @@
         .care-item.active .care-content { max-height: 600px; padding: 0 0 18px 34px; }
         .care-content strong { color: var(--text-primary); }
         .care-content ul, .care-content ol { padding-left: 20px; margin: 8px 0; }
+
+        .section-head {
+            padding: 18px 16px 8px;
+        }
+        .section-head h2 {
+            font-size: 19px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-primary);
+        }
+        .section-head h2 i { color: var(--accent); font-size: 18px; }
 
         .masters {
             display: grid;
@@ -416,10 +383,43 @@
             z-index: 2;
         }
 
-        .support-bottom {
+        /* Соцсети (перемещены вниз) */
+        .actions {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
             padding: 16px 16px 8px;
-            margin-top: 8px;
             border-top: 0.5px solid var(--separator);
+            margin-top: 8px;
+        }
+        .action-btn {
+            background: var(--btn-default-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 14px;
+            padding: 14px 6px;
+            text-align: center;
+            text-decoration: none;
+            color: var(--btn-default-text);
+            font-weight: 500;
+            font-size: 0;
+            transition: all 0.12s;
+            border: 1px solid var(--border-light);
+            cursor: pointer;
+        }
+        .action-btn i { font-size: 26px; }
+        .action-btn.vk i { color: var(--vk-blue); }
+        .action-btn.inst i { color: var(--inst-pink); }
+        .action-btn.tg i { color: var(--tg-blue); }
+        .action-btn:active { 
+            transform: scale(0.97); 
+            background: var(--btn-active-bg); 
+            color: var(--btn-active-text);
+        }
+        .action-btn:active i { color: var(--btn-active-text); }
+
+        .support-bottom {
+            padding: 8px 16px 16px;
         }
         .support-btn {
             display: flex;
@@ -685,27 +685,32 @@
         <p style="font-size:12px; color:var(--text-tertiary); margin-top:10px;">Ваш ID: <span id="userIdDisplay"></span></p>
     </div>
 
-    <!-- Соцсети -->
+    <!-- Уход (перемещён наверх) -->
+    <div class="section-head"><h2><i class="fas fa-hand-holding-heart"></i> Уход</h2></div>
+    <div class="care-list" id="careContainer"></div>
+
+    <!-- Мастера -->
+    <div class="section-head"><h2><i class="fas fa-user-group"></i> Мастера</h2></div>
+    <div class="masters" id="mastersContainer"></div>
+
+    <!-- Кнопки записи/чата -->
+    <div class="middle-actions">
+        <button class="primary-btn" id="bookBtn"><i class="fas fa-calendar"></i> Запись</button>
+        <button class="secondary-btn" id="chatBtn"><i class="fas fa-comment"></i> Чат</button>
+    </div>
+
+    <!-- Работы -->
+    <div class="section-head"><h2><i class="fas fa-grid-2"></i> Работы</h2></div>
+    <div class="gallery" id="galleryContainer"></div>
+
+    <!-- Соцсети (перемещены вниз) -->
     <div class="actions">
         <a href="#" class="action-btn vk" id="vkBtn" target="_blank"><i class="fab fa-vk"></i></a>
         <a href="#" class="action-btn inst" id="instBtn" target="_blank"><i class="fab fa-instagram"></i></a>
         <a href="#" class="action-btn tg" id="tgBtn" target="_blank"><i class="fab fa-telegram-plane"></i></a>
     </div>
 
-    <div class="section-head"><h2><i class="fas fa-hand-holding-heart"></i> Уход</h2></div>
-    <div class="care-list" id="careContainer"></div>
-
-    <div class="section-head"><h2><i class="fas fa-user-group"></i> Мастера</h2></div>
-    <div class="masters" id="mastersContainer"></div>
-
-    <div class="middle-actions">
-        <button class="primary-btn" id="bookBtn"><i class="fas fa-calendar"></i> Запись</button>
-        <button class="secondary-btn" id="chatBtn"><i class="fas fa-comment"></i> Чат</button>
-    </div>
-
-    <div class="section-head"><h2><i class="fas fa-grid-2"></i> Работы</h2></div>
-    <div class="gallery" id="galleryContainer"></div>
-
+    <!-- Поддержка -->
     <div class="support-bottom">
         <div class="support-btn" id="supportBtn"><i class="fas fa-headset"></i> Поддержка</div>
     </div>
